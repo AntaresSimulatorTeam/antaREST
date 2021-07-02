@@ -294,7 +294,7 @@ def create_study_routes(
 
     @bp.get(
         "/studies/{uuid}/raw",
-        tags=[APITag.study_data],
+        tags=[APITag.study_raw_data],
         summary="Read data",
     )
     def get_study(
@@ -324,7 +324,7 @@ def create_study_routes(
     @bp.post(
         "/studies/{uuid}/raw",
         status_code=HTTPStatus.NO_CONTENT.value,
-        tags=[APITag.study_data],
+        tags=[APITag.study_raw_data],
         summary="Update data",
     )
     def edit_study(
@@ -420,7 +420,7 @@ def create_study_routes(
     @bp.get(
         "/studies/{uuid}/validate",
         summary="Launch test validation on study",
-        tags=[APITag.study_data],
+        tags=[APITag.study_raw_data],
     )
     def validate(uuid: str) -> Any:
         return storage_service.check_errors(uuid)

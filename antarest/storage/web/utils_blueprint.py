@@ -58,7 +58,7 @@ def create_utils_routes(
     auth = Auth(config)
 
     @bp.get(
-        "/v1/file/{path:path}", tags=[APITag.study_data], summary="Get file"
+        "/v1/file/{path:path}", tags=[APITag.study_raw_data], summary="Get file"
     )
     def get_file(
         path: str, current_user: JWTUser = Depends(auth.get_current_user)
@@ -75,7 +75,7 @@ def create_utils_routes(
     @bp.post(
         "/v1/file/{path:path}",
         status_code=HTTPStatus.NO_CONTENT.value,
-        tags=[APITag.study_data],
+        tags=[APITag.study_raw_data],
         summary="Post file",
     )
     def post_file(
