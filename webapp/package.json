@@ -33,6 +33,7 @@
     "debug": "^4.3.1",
     "dotenv": "^8.6.0",
     "dotenv-expand": "^5.1.0",
+    "frappe-datatable": "^1.15.3",
     "handsontable": "^9.0.1",
     "i18next": "^19.9.2",
     "i18next-browser-languagedetector": "^4.3.1",
