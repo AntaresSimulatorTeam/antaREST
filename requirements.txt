@@ -27,3 +27,4 @@ gunicorn
 alembic
 psycopg2-binary
 cefpython3
+python-json-logger
