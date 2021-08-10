@@ -26,4 +26,5 @@ pydantic~=1.8.2
 gunicorn
 alembic
 psycopg2-binary
+cefpython3
 python-json-logger
