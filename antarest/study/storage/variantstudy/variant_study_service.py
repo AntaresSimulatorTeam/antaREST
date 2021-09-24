@@ -146,7 +146,7 @@ class VariantStudyService(AbstractStorageService[VariantStudy]):
 
     def append_command(
         self, study_id: str, command: CommandDTO, params: RequestParameters
-    ) -> None:
+    ) -> str:
         """
         Add command to list of commands (at the end)
         Args:
@@ -157,14 +157,17 @@ class VariantStudyService(AbstractStorageService[VariantStudy]):
         """
         study = self._get_variant_study(study_id, params)
         index = len(study.commands)
-        study.commands.append(
-            CommandBlock(
-                command=command.action,
-                args=json.dumps(command.args),
-                index=index,
-            )
+        new_id = str(uuid4())
+        command_block = CommandBlock(
+            id=new_id,
+            command=command.action,
+            study_id=study.id,
+            args=json.dumps(command.args),
+            index=index,
         )
-        self.repository.save(metadata=study, update_modification_date=True)
+        study.commands.append(command_block)
+        self.repository.save(study, update_modification_date=True)
+        return new_id
 
     def append_commands(
         self,
@@ -236,6 +239,8 @@ class VariantStudyService(AbstractStorageService[VariantStudy]):
         index = [command.id for command in study.commands].index(command_id)
         if index >= 0:
             study.commands.pop(index)
+            for idx, command in enumerate(study.commands):
+                command.index = idx
             self.repository.save(metadata=study, update_modification_date=True)
 
     def update_command(
