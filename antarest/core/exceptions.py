@@ -1,9 +1,25 @@
 from http import HTTPStatus
+from http.client import EXPECTATION_FAILED
 
 from fastapi import HTTPException
 
 
 class StudyNotFoundError(HTTPException):
+    def __init__(self, message: str) -> None:
+        super().__init__(HTTPStatus.NOT_FOUND, message)
+
+
+class VariantGenerationError(HTTPException):
+    def __init__(self, message: str) -> None:
+        super().__init__(EXPECTATION_FAILED, message)
+
+
+class NoParentStudyError(HTTPException):
+    def __init__(self, message: str) -> None:
+        super().__init__(HTTPStatus.NOT_FOUND, message)
+
+
+class CommandNotFoundError(HTTPException):
     def __init__(self, message: str) -> None:
         super().__init__(HTTPStatus.NOT_FOUND, message)
 
@@ -23,6 +39,14 @@ class StudyTypeUnsupported(HTTPException):
         super().__init__(
             HTTPStatus.UNPROCESSABLE_ENTITY,
             f"Study {uuid} with type {type} not recognized",
+        )
+
+
+class UnsupportedStudyVersion(HTTPException):
+    def __init__(self, version: int) -> None:
+        super().__init__(
+            HTTPStatus.BAD_REQUEST,
+            f"Study version {version} is not supported",
         )
 
 
