@@ -64,6 +64,13 @@ const theme = createTheme({
         },
       },
     },
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          ...scrollbarStyle,
+        },
+      },
+    },
     MuiButton: {
       variants: [
         {
