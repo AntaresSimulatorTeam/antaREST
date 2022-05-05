@@ -9,6 +9,7 @@ export interface UsePromiseResponse<T> {
 
 function usePromise<T>(
   fn: () => Promise<T>,
+  resetOnReload = true,
   deps: DependencyList = []
 ): UsePromiseResponse<T> {
   const [data, setData] = useState<T>();
@@ -23,7 +24,9 @@ function usePromise<T>(
 
       setIsLoading(true);
       // Reset
-      setData(undefined);
+      if (resetOnReload) {
+        setData(undefined);
+      }
       setError(undefined);
 
       fn()

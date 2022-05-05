@@ -6,9 +6,10 @@ import usePromise, { UsePromiseResponse } from "./usePromise";
 function usePromiseWithSnackbarError<T>(
   fn: () => Promise<T>,
   errorMessageKey: string,
+  resetOnReload = true,
   deps: DependencyList = []
 ): UsePromiseResponse<T> {
-  const res = usePromise(fn, deps);
+  const res = usePromise(fn, resetOnReload, deps);
   const enqueueErrorSnackbar = useEnqueueErrorSnackbar();
   const [t] = useTranslation();
 
