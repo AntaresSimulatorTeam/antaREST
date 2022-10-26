@@ -312,6 +312,7 @@ class SimpleSyncTaskService(ITaskService):
         ref_id: Optional[str],
         custom_event_messages: Optional[CustomTaskEventMessages],
         request_params: RequestParameters,
+        use_db: bool = True
     ) -> str:
         action(self._create_notifier())
         return str(uuid.uuid4())

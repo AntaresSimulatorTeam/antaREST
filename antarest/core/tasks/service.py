@@ -68,6 +68,7 @@ class ITaskService(ABC):
         ref_id: Optional[str],
         custom_event_messages: Optional[CustomTaskEventMessages],
         request_params: RequestParameters,
+        use_db: bool = True
     ) -> str:
         raise NotImplementedError()
 
@@ -188,6 +189,7 @@ class TaskJobService(ITaskService):
             self._create_worker_task(str(task.id), task_queue, task_args),
             task,
             None,
+            False,
             request_params,
         )
         return str(task.id)
@@ -200,9 +202,10 @@ class TaskJobService(ITaskService):
         ref_id: Optional[str],
         custom_event_messages: Optional[CustomTaskEventMessages],
         request_params: RequestParameters,
+        use_db: bool = True,
     ) -> str:
         task = self._create_task(name, task_type, ref_id, request_params)
-        self._launch_task(action, task, custom_event_messages, request_params)
+        self._launch_task(action, task, custom_event_messages, use_db, request_params)
         return str(task.id)
 
     def _create_task(
@@ -229,6 +232,7 @@ class TaskJobService(ITaskService):
         action: Task,
         task: TaskJob,
         custom_event_messages: Optional[CustomTaskEventMessages],
+        use_db: bool,
         request_params: RequestParameters,
     ) -> None:
         if not request_params.user:
@@ -249,7 +253,7 @@ class TaskJobService(ITaskService):
             )
         )
         future = self.threadpool.submit(
-            self._run_task, action, task.id, custom_event_messages
+            self._run_task, action, task.id, use_db, custom_event_messages
         )
         self.tasks[task.id] = future
 
@@ -346,6 +350,7 @@ class TaskJobService(ITaskService):
         self,
         callback: Task,
         task_id: str,
+        use_db: bool,
         custom_event_messages: Optional[CustomTaskEventMessages] = None,
     ) -> None:
 
@@ -368,8 +373,13 @@ class TaskJobService(ITaskService):
             task.status = TaskStatus.RUNNING.value
             self.repo.save(task)
             logger.info(f"Task {task_id} set to RUNNING")
-            try:
+        try:
+            if use_db:
+                with db():
+                    result = callback(self._task_logger(task_id))
+            else:
                 result = callback(self._task_logger(task_id))
+            with db():
                 logger.info(f"Task {task_id} ended")
                 self._update_task_status(
                     task_id,
@@ -394,25 +404,26 @@ class TaskJobService(ITaskService):
                         channel=EventChannelDirectory.TASK + task_id,
                     )
                 )
-            except Exception as e:
-                logger.error(
-                    f"Exception when running task {task_id}", exc_info=e
-                )
+        except Exception as e:
+            logger.error(
+                f"Exception when running task {task_id}", exc_info=e
+            )
+            with db():
                 self._update_task_status(
                     task_id, TaskStatus.FAILED, False, str(e)
                 )
-                self.event_bus.push(
-                    Event(
-                        type=EventType.TASK_FAILED,
-                        payload=TaskEventPayload(
-                            id=task_id,
-                            message=custom_event_messages.end
-                            if custom_event_messages is not None
-                            else f"Task {task_id} failed",
-                        ).dict(),
-                        channel=EventChannelDirectory.TASK + task_id,
-                    )
+            self.event_bus.push(
+                Event(
+                    type=EventType.TASK_FAILED,
+                    payload=TaskEventPayload(
+                        id=task_id,
+                        message=custom_event_messages.end
+                        if custom_event_messages is not None
+                        else f"Task {task_id} failed",
+                    ).dict(),
+                    channel=EventChannelDirectory.TASK + task_id,
                 )
+            )
 
     def _task_logger(self, task_id: str) -> Callable[[str], None]:
         def log_msg(message: str) -> None:

@@ -652,10 +652,12 @@ class LauncherService:
                         format="zip",
                         root_dir=output_path,
                     )
-                    self.file_transfer_manager.set_ready(export_id)
+                    with db():
+                        self.file_transfer_manager.set_ready(export_id)
                     return TaskResult(success=True, message="")
                 except Exception as e:
-                    self.file_transfer_manager.fail(export_id, str(e))
+                    with db():
+                        self.file_transfer_manager.fail(export_id, str(e))
                     raise e
 
             task_id = self.task_service.add_task(
@@ -665,6 +667,7 @@ class LauncherService:
                 ref_id=None,
                 custom_event_messages=None,
                 request_params=params,
+                use_db=False
             )
 
             return FileDownloadTaskDTO(
