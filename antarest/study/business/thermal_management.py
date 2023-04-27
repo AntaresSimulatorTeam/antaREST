@@ -1,8 +1,8 @@
 from enum import Enum
 from pathlib import PurePosixPath
-from typing import Optional, Dict, Any, List
+from typing import Any, List, Dict
 
-from pydantic import StrictStr, StrictBool
+from pydantic import confloat
 
 from antarest.study.business.utils import (
     FormFieldsBaseModel,
@@ -27,144 +27,144 @@ class LawOption(str, Enum):
     GEOMETRIC = "geometric"
 
 
-THERMAL_PATH = "input/thermal/clusters/{area}/list/{cluster}"
-
-
 class ThermalFormFields(FormFieldsBaseModel):
-    group: Optional[StrictStr]
-    name: Optional[StrictStr]
-    unit_count: Optional[int]
-    enabled: Optional[StrictBool]
-    nominal_capacity: Optional[int]
-    gen_ts: Optional[TimeSeriesGenerationOption]
-    min_stable_power: Optional[int]
-    min_up_time: Optional[int]
-    min_down_time: Optional[int]
-    must_run: Optional[StrictBool]
-    spinning: Optional[int]
-    co2: Optional[int]
-    volatility_forced: Optional[int]
-    volatility_planned: Optional[int]
-    law_forced: Optional[LawOption]
-    law_planned: Optional[LawOption]
-    marginal_cost: Optional[int]
-    spread_cost: Optional[int]
-    fixed_cost: Optional[int]
-    startup_cost: Optional[int]
-    market_bid_cost: Optional[int]
+    """
+    Pydantic model representing thermal cluster configuration form fields.
+    """
+
+    group: str
+    name: str
+    unit_count: int
+    enabled: bool
+    nominal_capacity: int
+    gen_ts: TimeSeriesGenerationOption
+    min_stable_power: int
+    min_up_time: int
+    min_down_time: int
+    must_run: bool
+    spinning: int
+    co2: confloat(ge=0)
+    nh3: confloat(ge=0)
+    so2: confloat(ge=0)
+    nox: confloat(ge=0)
+    pm2_5: confloat(ge=0)
+    pm5: confloat(ge=0)
+    pm10: confloat(ge=0)
+    nmvoc: confloat(ge=0)
+    op1: confloat(ge=0)
+    op2: confloat(ge=0)
+    op3: confloat(ge=0)
+    op4: confloat(ge=0)
+    op5: confloat(ge=0)
+    volatility_forced: int
+    volatility_planned: int
+    law_forced: LawOption
+    law_planned: LawOption
+    marginal_cost: int
+    spread_cost: int
+    fixed_cost: int
+    startup_cost: int
+    market_bid_cost: int
 
 
-FIELDS_INFO: Dict[str, FieldInfo] = {
-    "group": {
-        "path": f"{THERMAL_PATH}/group",
-        "default_value": "",
-    },
-    "name": {
-        "path": f"{THERMAL_PATH}/name",
-        "default_value": "",
-    },
-    "unit_count": {
-        "path": f"{THERMAL_PATH}/unitcount",
-        "default_value": 0,
-    },
-    "enabled": {
-        "path": f"{THERMAL_PATH}/enabled",
-        "default_value": True,
-    },
-    "nominal_capacity": {
-        "path": f"{THERMAL_PATH}/nominalcapacity",
-        "default_value": 0,
-    },
-    "gen_ts": {
-        "path": f"{THERMAL_PATH}/gen-ts",
-        "default_value": TimeSeriesGenerationOption.USE_GLOBAL_PARAMETER.value,
-    },
-    "min_stable_power": {
-        "path": f"{THERMAL_PATH}/min-stable-power",
-        "default_value": 0,
-    },
-    "min_up_time": {
-        "path": f"{THERMAL_PATH}/min-up-time",
-        "default_value": 1,
-    },
-    "min_down_time": {
-        "path": f"{THERMAL_PATH}/min-down-time",
-        "default_value": 1,
-    },
-    "must_run": {
-        "path": f"{THERMAL_PATH}/must-run",
-        "default_value": False,
-    },
-    "spinning": {
-        "path": f"{THERMAL_PATH}/spinning",
-        "default_value": 0,
-    },
-    "co2": {
-        "path": f"{THERMAL_PATH}/co2",
-        "default_value": 0,
-    },
-    "volatility_forced": {
-        "path": f"{THERMAL_PATH}/volatility.forced",
-        "default_value": 0,
-    },
-    "volatility_planned": {
-        "path": f"{THERMAL_PATH}/volatility.planned",
-        "default_value": 0,
-    },
-    "law_forced": {
-        "path": f"{THERMAL_PATH}/law.forced",
-        "default_value": LawOption.UNIFORM.value,
-    },
-    "law_planned": {
-        "path": f"{THERMAL_PATH}/law.planned",
-        "default_value": LawOption.UNIFORM.value,
-    },
-    "marginal_cost": {
-        "path": f"{THERMAL_PATH}/marginal-cost",
-        "default_value": 0,
-    },
-    "spread_cost": {
-        "path": f"{THERMAL_PATH}/spread-cost",
-        "default_value": 0,
-    },
-    "fixed_cost": {
-        "path": f"{THERMAL_PATH}/fixed-cost",
-        "default_value": 0,
-    },
-    "startup_cost": {
-        "path": f"{THERMAL_PATH}/startup-cost",
-        "default_value": 0,
-    },
-    "market_bid_cost": {
-        "path": f"{THERMAL_PATH}/market-bid-cost",
-        "default_value": 0,
-    },
-}
+THERMAL_PATH = "input/thermal/clusters/{area}/list/{cluster}"
 
 
 def format_path(path: str, area_id: str, cluster_id: str) -> str:
     return path.format(area=area_id, cluster=cluster_id)
 
 
+class FieldMetadata:
+    """Metadata for a field in the thermal form."""
+
+    def __init__(self, path: str, default_value: Any):
+        self.path = path
+        self.default_value = default_value
+
+
+FIELDS_METADATA: List[FieldMetadata] = [
+    FieldMetadata("group", ""),
+    FieldMetadata("name", ""),
+    FieldMetadata("unit_count", 0),
+    FieldMetadata("enabled", True),
+    FieldMetadata("nominal_capacity", 0),
+    FieldMetadata("gen_ts", TimeSeriesGenerationOption.USE_GLOBAL_PARAMETER),
+    FieldMetadata("min_stable_power", 0),
+    FieldMetadata("min_up_time", 1),
+    FieldMetadata("min_down_time", 1),
+    FieldMetadata("must_run", False),
+    FieldMetadata("spinning", 0),
+    FieldMetadata("co2", 0),
+    FieldMetadata("nh3", 0),
+    FieldMetadata("so2", 0),
+    FieldMetadata("nox", 0),
+    FieldMetadata("pm2_5", 0),
+    FieldMetadata("pm5", 0),
+    FieldMetadata("pm10", 0),
+    FieldMetadata("nmvoc", 0),
+    FieldMetadata("op1", 0),
+    FieldMetadata("op2", 0),
+    FieldMetadata("op3", 0),
+    FieldMetadata("op4", 0),
+    FieldMetadata("op5", 0),
+    FieldMetadata("volatility_forced", 0),
+    FieldMetadata("volatility_planned", 0),
+    FieldMetadata("law_forced", LawOption.UNIFORM),
+    FieldMetadata("law_planned", LawOption.UNIFORM),
+    FieldMetadata("marginal_cost", 0),
+    FieldMetadata("spread_cost", 0),
+    FieldMetadata("fixed_cost", 0),
+    FieldMetadata("startup_cost", 0),
+    FieldMetadata("market_bid_cost", 0),
+]
+
+FIELDS_INFO: Dict[str, FieldInfo] = {
+    # Create a dictionary mapping field names to FieldInfo instances
+    field_metadata.path: FieldInfo(
+        path=f"{THERMAL_PATH}/{field_metadata.path}",
+        default_value=field_metadata.default_value,
+    )
+    for field_metadata in FIELDS_METADATA
+}
+
+
 class ThermalManager:
+    """
+    Manage thermal clusters configuration in a study
+    """
+
     def __init__(self, storage_service: StudyStorageService):
         self.storage_service = storage_service
 
     def get_field_values(
         self, study: Study, area_id: str, cluster_id: str
     ) -> ThermalFormFields:
+        """
+        Get thermal cluster configuration for the given study, area_id, and cluster_id.
+
+        Args:
+            study: The study object.
+            area_id: The area ID of the thermal cluster.
+            cluster_id: The cluster ID of the thermal cluster.
+
+        Returns:
+            ThermalFormFields object containing the thermal cluster configuration.
+        """
+
         file_study = self.storage_service.get_storage(study).get_raw(study)
         thermal_config = file_study.tree.get(
             format_path(THERMAL_PATH, area_id, cluster_id).split("/")
         )
 
-        def get_value(field_info: FieldInfo) -> Any:
-            target_name = PurePosixPath(field_info["path"]).name
-            return thermal_config.get(target_name, field_info["default_value"])
+        # Create a dictionary of field values using FIELDS_INFO
+        field_values = {
+            name: thermal_config.get(
+                PurePosixPath(info["path"]).name, info["default_value"]
+            )
+            for name, info in FIELDS_INFO.items()
+        }
 
-        return ThermalFormFields.construct(
-            **{name: get_value(info) for name, info in FIELDS_INFO.items()}
-        )
+        return ThermalFormFields.construct(**field_values)
 
     def set_field_values(
         self,
@@ -173,9 +173,19 @@ class ThermalManager:
         cluster_id: str,
         field_values: ThermalFormFields,
     ) -> None:
+        """
+        Set thermal cluster configuration for the given study, area_id, and cluster_id.
+
+        Args:
+            study: The study object.
+            area_id: The area ID of the thermal cluster.
+            cluster_id: The cluster ID of the thermal cluster.
+            field_values: ThermalFormFields object containing the thermal cluster configuration.
+        """
+
         commands: List[UpdateConfig] = []
 
-        for field_name, value in field_values.__iter__():
+        for field_name, value in dict(field_values).items():
             if value is not None:
                 info = FIELDS_INFO[field_name]
 
