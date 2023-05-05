@@ -59,7 +59,10 @@ from antarest.study.business.table_mode_management import (
 from antarest.study.business.thematic_trimming_management import (
     ThematicTrimmingFormFields,
 )
-from antarest.study.business.thermal_management import ThermalFormFields
+from antarest.study.business.thermal_management import (
+    ThermalFormFields,
+    TimeSeriesGenerationOption,
+)
 from antarest.study.business.timeseries_config_management import TSFormFields
 from antarest.study.model import PatchArea, PatchCluster
 from antarest.study.service import StudyService
@@ -1454,7 +1457,7 @@ def create_study_data_routes(
     @bp.get(
         path="/studies/{uuid}/areas/{area_id}/clusters/thermal/{cluster_id}/form",
         tags=[APITag.study_data],
-        summary="Get thermal options for a given cluster",
+        summary="Get the fields for the thermal cluster form",
         response_model=ThermalFormFields,
         response_model_exclude_none=True,
     )
@@ -1464,10 +1467,20 @@ def create_study_data_routes(
         cluster_id: str,
         current_user: JWTUser = Depends(auth.get_current_user),
     ) -> ThermalFormFields:
+        """
+        Get the fields used for the thermal cluster form
+
+        Parameters:
+        - `uuid:`: The UUID of the study.
+        - `area_id:`:  The area ID.
+        - `cluster_id:`:  The cluster ID from which we want to retrieve the fields.
+
+        Returns the thermal cluster fields (with the emission rates of pollutants).
+        """
         logger.info(
-            "Getting thermal form values for study %s and cluster %s",
-            uuid,
-            cluster_id,
+            "Getting the form fields of the thermal cluster '%(cluster_id)s'"
+            " of the area '%(area_id)s' from the study %(uuid)s",
+            dict(uuid=uuid, area_id=area_id, cluster_id=cluster_id),
             extra={"user": current_user.id},
         )
         params = RequestParameters(user=current_user)
@@ -1487,20 +1500,40 @@ def create_study_data_routes(
         uuid: str,
         area_id: str,
         cluster_id: str,
-        form_fields: ThermalFormFields,
+        form_fields: ThermalFormFields = Body(
+            ...,
+            example=ThermalFormFields(
+                unit_count=2,
+                nominal_capacity=2,
+                gen_ts=TimeSeriesGenerationOption.FORCE_GENERATION,
+                min_down_time=12,
+                must_run=True,
+                spinning=25,  # percent (%)
+                co2=8.9,
+                nox=3.14,
+            ),
+        ),
         current_user: JWTUser = Depends(auth.get_current_user),
     ) -> None:
+        """
+        Set the fields used for the thermal cluster form
+
+        Parameters:
+        - `uuid:`: The UUID of the study.
+        - `area_id:`:  The area ID.
+        - `cluster_id:`:  The cluster ID from which we want to retrieve the fields.
+        - `form_fields:`: The field values to update.
+        """
         logger.info(
-            "Setting thermal form values for study %s and cluster %s",
-            uuid,
-            cluster_id,
+            "Setting the form fields of the thermal cluster '%(cluster_id)s'"
+            " of the area '%(area_id)s' to the study %(uuid)s",
+            dict(uuid=uuid, area_id=area_id, cluster_id=cluster_id),
             extra={"user": current_user.id},
         )
-        request_params = RequestParameters(user=current_user)
+        params = RequestParameters(user=current_user)
         study = study_service.check_study_access(
-            uuid, StudyPermissionType.WRITE, request_params
+            uuid, StudyPermissionType.WRITE, params
         )
-
         study_service.thermal_manager.set_field_values(
             study, area_id, cluster_id, form_fields
         )
