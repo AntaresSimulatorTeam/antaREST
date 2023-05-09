@@ -40,7 +40,7 @@ class ThermalFormFields(FormFieldsBaseModel):
     # fmt: off
     group: str = ""
     name: str = ""
-    unit_count: int = Field(..., description="Unit count", ge=1, ini_alias="unitcount")
+    unit_count: int = Field(1, description="Unit count", ge=1, ini_alias="unitcount")
     enabled: bool = Field(True, description="Enable flag")
     nominal_capacity: float = Field(
         0.0, description="Nominal capacity - spinning (MW)", ge=0, ini_alias="nominalcapacity")
