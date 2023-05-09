@@ -51,7 +51,7 @@ class TestClustersThermal:
             # must-run
             "must-run": True,
             # spinning
-            "spinning": 0.25,  # in range (0, 1)
+            "spinning": 25,  # in range (0, 100)
             # volatility
             "volatility.forced": 0.200000,
             "volatility.planned": 0.500000,
@@ -112,7 +112,7 @@ class TestClustersThermal:
             min_up_time=all_ini_values["min-up-time"],
             min_down_time=all_ini_values["min-down-time"],
             must_run=all_ini_values["must-run"],
-            spinning=all_ini_values["spinning"] * 100,  # percent (%)
+            spinning=all_ini_values["spinning"],  # percent (%)
             volatility_forced=all_ini_values["volatility.forced"],
             volatility_planned=all_ini_values["volatility.planned"],
             law_forced=LawOption(all_ini_values["law.forced"]),
@@ -214,7 +214,7 @@ class TestClustersThermal:
             "name": "Cluster 1",
             "nominalcapacity": 2.0,
             "nox": 3.14,
-            "spinning": 0.25,
+            "spinning": 25,
             "unitcount": 1,
         }
         assert actual == expected

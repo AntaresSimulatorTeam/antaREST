@@ -116,8 +116,6 @@ class ThermalManager:
             THERMAL_PATH.format(area=area_id, cluster=cluster_id).split("/"),
             depth=1,
         )
-        # Spinning (%)
-        thermal_config["spinning"] = thermal_config.get("spinning", 0) * 100
         return ThermalFormFields.from_ini(thermal_config)
 
     def set_field_values(
@@ -139,9 +137,6 @@ class ThermalManager:
         # NOTE: The form field names are in camelCase,
         # while the configuration field names are in snake_case.
         thermal_config = field_values.to_ini()
-        if "spinning" in thermal_config:
-            # Spinning (%)
-            thermal_config["spinning"] = thermal_config["spinning"] / 100
         command = UpdateConfig(
             target=THERMAL_PATH.format(area=area_id, cluster=cluster_id),
             data=thermal_config,
