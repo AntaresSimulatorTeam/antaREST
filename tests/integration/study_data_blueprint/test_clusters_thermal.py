@@ -2,14 +2,13 @@ import json
 from http import HTTPStatus
 
 import pytest
-from starlette.testclient import TestClient
-
 from antarest.study.business.thermal_management import (
     THERMAL_PATH,
     LawOption,
     ThermalFormFields,
     TimeSeriesGenerationOption,
 )
+from starlette.testclient import TestClient
 
 
 @pytest.mark.unit_test
@@ -218,3 +217,51 @@ class TestClustersThermal:
             "unitcount": 1,
         }
         assert actual == expected
+
+    def test_delete_area(
+        self, client: TestClient, user_access_token: str, study_id: str
+    ):
+        """
+        Given a study, when an area is deleted, all the thermal clusters must be removed.
+        """
+        area_id = "fr"
+        cluster_id = "cluster 1"
+
+        # First prepare a cluster in one area with the following parameters
+        # noinspection SpellCheckingInspection
+        all_ini_values = {
+            # general configuration
+            "name": cluster_id.title(),
+            "group": "Gas",  # e.g.: "Lignite", "Oil", "Gas"...
+            "enabled": True,
+            "unitcount": 2,
+            "nominalcapacity": 1200,
+            "co2": 1.5,
+        }
+        path = THERMAL_PATH.format(area=area_id, cluster=cluster_id)
+        res = client.post(
+            f"/v1/studies/{study_id}/raw?path={path}",
+            headers={"Authorization": f"Bearer {user_access_token}"},
+            json={k: v for k, v in all_ini_values.items() if v},
+        )
+        res.raise_for_status()
+
+        # Then we remove the France area.
+        # The deletion should remove all thermal clusters.
+        res = client.delete(
+            f"/v1/studies/{study_id}/areas/fr",
+            headers={"Authorization": f"Bearer {user_access_token}"},
+        )
+        res.raise_for_status()
+
+        # Check that the thermal cluster is removed
+        res = client.get(
+            f"/v1/studies/{study_id}/areas/{area_id}/clusters/thermal/{cluster_id}/form",
+            headers={"Authorization": f"Bearer {user_access_token}"},
+        )
+        assert res.status_code == HTTPStatus.NOT_FOUND, res.json()
+        actual = res.json()
+        assert actual == {
+            "description": "fr not a child of InputThermalClusters",
+            "exception": "ChildNotFoundError",
+        }
