@@ -3,6 +3,7 @@ from http import HTTPStatus
 from typing import Any, Dict, List, Optional, Union, cast
 
 from antarest.core.config import Config
+from antarest.core.exceptions import ThermalClusterNotFound
 from antarest.core.jwt import JWTUser
 from antarest.core.model import StudyPermissionType
 from antarest.core.requests import RequestParameters
@@ -1487,9 +1488,12 @@ def create_study_data_routes(
         study = study_service.check_study_access(
             uuid, StudyPermissionType.READ, params
         )
-        return study_service.thermal_manager.get_field_values(
-            study, area_id, cluster_id
-        )
+        try:
+            return study_service.thermal_manager.get_field_values(
+                study, area_id, cluster_id
+            )
+        except ThermalFieldsNotFoundError as exc:
+            raise ThermalClusterNotFound(area_id, cluster_id) from exc
 
     @bp.put(
         path="/studies/{uuid}/areas/{area_id}/clusters/thermal/{cluster_id}/form",

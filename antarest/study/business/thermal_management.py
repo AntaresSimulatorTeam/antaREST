@@ -88,6 +88,10 @@ class ThermalFormFields(FormFieldsBaseModel):
 THERMAL_PATH = "input/thermal/clusters/{area}/list/{cluster}"
 
 
+class ThermalFieldsNotFoundError(Exception):
+    """Fields of the thermal cluster are not found"""
+
+
 class ThermalManager:
     """
     Manage thermal clusters configuration in a study
@@ -112,11 +116,19 @@ class ThermalManager:
         """
 
         file_study = self.storage_service.get_storage(study).get_raw(study)
-        thermal_config = file_study.tree.get(
-            THERMAL_PATH.format(area=area_id, cluster=cluster_id).split("/"),
-            depth=1,
-        )
-        return ThermalFormFields.from_ini(thermal_config)
+        # fmt: off
+        try:
+            thermal_config = file_study.tree.get(
+                THERMAL_PATH.format(area=area_id, cluster=cluster_id).split("/"),
+                depth=1,
+            )
+        except KeyError:
+            raise ThermalFieldsNotFoundError(
+                f"Fields of thermal cluster '{cluster_id}' not found in '{area_id}'"
+            ) from None
+        else:
+            return ThermalFormFields.from_ini(thermal_config)
+        # fmt: on
 
     def set_field_values(
         self,

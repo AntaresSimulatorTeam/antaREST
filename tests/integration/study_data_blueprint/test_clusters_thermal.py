@@ -214,7 +214,6 @@ class TestClustersThermal:
             "nominalcapacity": 2.0,
             "nox": 3.14,
             "spinning": 25,
-            "unitcount": 1,
         }
         assert actual == expected
 

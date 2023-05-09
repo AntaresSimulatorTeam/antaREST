@@ -225,6 +225,23 @@ class DistrictAlreadyExist(HTTPException):
         super().__init__(HTTPStatus.CONFLICT, msg)
 
 
+class ThermalClusterNotFound(HTTPException):
+    """
+    Exception raised when one or several thermal clusters
+    are not found in a study area.
+    """
+
+    def __init__(self, area_id: str, *cluster_id: str) -> None:
+        count = len(cluster_id)
+        ids = ", ".join(f"'{a}'" for a in cluster_id)
+        msg = {
+            0: "All thermal clusters are found in '{area_id}'",
+            1: f"Thermal cluster {ids} is not found in '{area_id}'",
+            2: f"Thermal clusters {ids} are not found in '{area_id}'",
+        }[min(count, 2)]
+        super().__init__(HTTPStatus.NOT_FOUND, msg)
+
+
 class BadEditInstructionException(HTTPException):
     def __init__(self, message: str) -> None:
         super().__init__(HTTPStatus.BAD_REQUEST, message)
