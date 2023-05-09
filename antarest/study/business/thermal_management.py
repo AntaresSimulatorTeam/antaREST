@@ -8,6 +8,9 @@ from antarest.study.business.utils import (
 )
 from antarest.study.model import Study
 from antarest.study.storage.storage_service import StudyStorageService
+from antarest.study.storage.variantstudy.model.command.remove_cluster import (
+    RemoveCluster,
+)
 from antarest.study.storage.variantstudy.model.command.update_config import (
     UpdateConfig,
 )
@@ -152,6 +155,30 @@ class ThermalManager:
         command = UpdateConfig(
             target=THERMAL_PATH.format(area=area_id, cluster=cluster_id),
             data=thermal_config,
+            command_context=self.storage_service.variant_study_service.command_factory.command_context,
+        )
+        file_study = self.storage_service.get_storage(study).get_raw(study)
+        execute_or_add_commands(
+            study, file_study, [command], self.storage_service
+        )
+
+    def delete_cluster(
+        self,
+        study: Study,
+        area_id: str,
+        cluster_id: str,
+    ) -> None:
+        """
+        Delete a thermal cluster configuration form the given study and area_id.
+
+        Args:
+            study: The study object.
+            area_id: The area ID of the thermal cluster.
+            cluster_id: The cluster ID of the thermal cluster to remove.
+        """
+        command = RemoveCluster(
+            area_id=area_id,
+            cluster_id=cluster_id,
             command_context=self.storage_service.variant_study_service.command_factory.command_context,
         )
         file_study = self.storage_service.get_storage(study).get_raw(study)

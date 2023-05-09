@@ -264,3 +264,52 @@ class TestClustersThermal:
             "description": "fr not a child of InputThermalClusters",
             "exception": "ChildNotFoundError",
         }
+
+    def test_delete_cluster(
+        self, client: TestClient, user_access_token: str, study_id: str
+    ):
+        """
+        Given a study, when a cluster is deleted, it must be removed from the area.
+        """
+        area_id = "fr"
+        cluster_id = "cluster 1"
+
+        # First prepare a cluster in one area with the following parameters
+        # noinspection SpellCheckingInspection
+        all_ini_values = {
+            # general configuration
+            "name": cluster_id.title(),
+            "group": "Gas",  # e.g.: "Lignite", "Oil", "Gas"...
+            "enabled": True,
+            "unitcount": 2,
+            "nominalcapacity": 1200,
+            "co2": 1.5,
+        }
+        path = THERMAL_PATH.format(area=area_id, cluster=cluster_id)
+        res = client.post(
+            f"/v1/studies/{study_id}/raw?path={path}",
+            headers={"Authorization": f"Bearer {user_access_token}"},
+            json={k: v for k, v in all_ini_values.items() if v},
+        )
+        res.raise_for_status()
+
+        # Then we remove the cluster
+        res = client.delete(
+            f"/v1/studies/{study_id}/areas/{area_id}/clusters/thermal/{cluster_id}/form",
+            headers={"Authorization": f"Bearer {user_access_token}"},
+        )
+        assert res.status_code == HTTPStatus.OK, res.json()
+        actual = res.json()
+        assert actual is None
+
+        # Then that the cluster is deleted
+        res = client.get(
+            f"/v1/studies/{study_id}/areas/{area_id}/clusters/thermal/{cluster_id}/form",
+            headers={"Authorization": f"Bearer {user_access_token}"},
+        )
+        assert res.status_code == HTTPStatus.NOT_FOUND, res.json()
+        actual = res.json()
+        assert actual == {
+            "description": "Thermal cluster 'cluster 1' is not found in 'fr'",
+            "exception": "ThermalClusterNotFound",
+        }

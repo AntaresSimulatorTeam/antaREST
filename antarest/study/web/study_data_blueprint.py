@@ -62,7 +62,7 @@ from antarest.study.business.thematic_trimming_management import (
 )
 from antarest.study.business.thermal_management import (
     ThermalFormFields,
-    TimeSeriesGenerationOption,
+    TimeSeriesGenerationOption, ThermalFieldsNotFoundError,
 )
 from antarest.study.business.timeseries_config_management import TSFormFields
 from antarest.study.model import PatchArea, PatchCluster
@@ -1540,6 +1540,39 @@ def create_study_data_routes(
         )
         study_service.thermal_manager.set_field_values(
             study, area_id, cluster_id, form_fields
+        )
+
+    @bp.delete(
+        path="/studies/{uuid}/areas/{area_id}/clusters/thermal/{cluster_id}/form",
+        tags=[APITag.study_data],
+        summary="Delete a thermal cluster",
+    )
+    def delete_thermal_cluster(
+        uuid: str,
+        area_id: str,
+        cluster_id: str,
+        current_user: JWTUser = Depends(auth.get_current_user),
+    ) -> None:
+        """
+        Delete a thermal cluster from the given area.
+
+        Parameters:
+        - `uuid:`: The UUID of the study.
+        - `area_id:`:  The area ID.
+        - `cluster_id:`:  The cluster ID from which we want to retrieve the fields.
+        """
+        logger.info(
+            "Delete the thermal cluster '%(cluster_id)s'"
+            " from the area '%(area_id)s' of the study %(uuid)s",
+            dict(uuid=uuid, area_id=area_id, cluster_id=cluster_id),
+            extra={"user": current_user.id},
+        )
+        params = RequestParameters(user=current_user)
+        study = study_service.check_study_access(
+            uuid, StudyPermissionType.WRITE, params
+        )
+        study_service.thermal_manager.delete_cluster(
+            study, area_id, cluster_id
         )
 
     return bp
