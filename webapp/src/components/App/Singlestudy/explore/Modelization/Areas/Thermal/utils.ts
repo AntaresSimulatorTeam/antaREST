@@ -37,7 +37,7 @@ export const noDataValues: Partial<ThermalType> = {
   enabled: true,
   unitcount: 0,
   nominalcapacity: 0,
-  "gen-ts": "use global parameter",
+  "gen-ts": "use global",
   "min-stable-power": 0,
   "min-up-time": 1,
   "min-down-time": 1,
@@ -86,7 +86,7 @@ enum ClusterGroup {
 }
 
 enum TimeSeriesGenerationOption {
-  UseGlobal = "use global parameter",
+  UseGlobal = "use global",
   ForceNoGeneration = "force no generation",
   ForceGeneration = "force generation",
 }

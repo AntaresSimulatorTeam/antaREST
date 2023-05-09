@@ -1,4 +1,3 @@
-import json
 from enum import Enum
 
 from pydantic import Field
@@ -15,7 +14,7 @@ from antarest.study.storage.variantstudy.model.command.update_config import (
 
 
 class TimeSeriesGenerationOption(str, Enum):
-    USE_GLOBAL_PARAMETER = "use global parameter"
+    USE_GLOBAL = "use global"
     FORCE_NO_GENERATION = "force no generation"
     FORCE_GENERATION = "force generation"
 
@@ -25,6 +24,7 @@ class LawOption(str, Enum):
     GEOMETRIC = "geometric"
 
 
+# noinspection SpellCheckingInspection
 class ThermalFormFields(FormFieldsBaseModel):
     """
     Pydantic model representing thermal cluster configuration form fields.
@@ -34,27 +34,40 @@ class ThermalFormFields(FormFieldsBaseModel):
         # Allow direct conversion from INI values
         allow_population_by_field_name = True
 
+    # https://github.com/AntaresSimulatorTeam/Antares_Simulator/blob/develop/src/libs/antares/study/parts/thermal/cluster.h
+    # https://github.com/AntaresSimulatorTeam/Antares_Simulator/blob/develop/src/libs/antares/study/parts/thermal/cluster_list.cpp
+
     # fmt: off
     group: str = ""
-    name: str = ""  # fixme: what is the purpose of that field
-    unit_count: int = 0
-    enabled: bool = True
-    nominal_capacity: int = 0
-    gen_ts: TimeSeriesGenerationOption = TimeSeriesGenerationOption.USE_GLOBAL_PARAMETER
-    min_stable_power: int = 0
-    min_up_time: int = 1
-    min_down_time: int = 1
-    must_run: bool = False
+    name: str = ""
+    unit_count: int = Field(..., description="Unit count", ge=1, ini_alias="unitcount")
+    enabled: bool = Field(True, description="Enable flag")
+    nominal_capacity: float = Field(
+        0.0, description="Nominal capacity - spinning (MW)", ge=0, ini_alias="nominalcapacity")
+    gen_ts: TimeSeriesGenerationOption = Field(
+        TimeSeriesGenerationOption.USE_GLOBAL, description="Time Series Generation Option", ini_alias="gen-ts")
+    min_stable_power: float = Field(0.0, description="Min. Stable Power (MW)", ini_alias="min-stable-power")
+    min_up_time: int = Field(1, description="Min. Uptime (h)", ge=1, le=168, ini_alias="min-up-time")
+    min_down_time: int = Field(1, description="Min. Downtime (h)", ge=1, le=168, ini_alias="min-down-time")
+    must_run: bool = Field(False, description="Must run flag", ini_alias="must-run")
     spinning: float = Field(0.0, description="Spinning (%)", ge=0, le=100)
-    volatility_forced: int = 0
-    volatility_planned: int = 0
-    law_forced: LawOption = LawOption.UNIFORM
-    law_planned: LawOption = LawOption.UNIFORM
-    marginal_cost: int = 0
-    spread_cost: int = 0
-    fixed_cost: int = 0
-    startup_cost: int = 0
-    market_bid_cost: int = 0
+    volatility_forced: float = Field(0.0, description="Forced Volatility", ge=0, le=1, ini_alias="volatility.forced")
+    volatility_planned: float = Field(0.0, description="Planned volatility", ge=0, le=1, ini_alias="volatility.planned")
+    law_forced: LawOption = Field(LawOption.UNIFORM, description="Forced Law (ts-generator)", ini_alias="law.forced")
+    law_planned: LawOption = Field(LawOption.UNIFORM, description="Planned Law (ts-generator)", ini_alias="law.planned")
+    marginal_cost: float = Field(0.0, description="Marginal cost (euros/MWh)", ge=0, ini_alias="marginal-cost")
+    spread_cost: float = Field(0.0, description="Spread (euros/MWh)", ge=0, ini_alias="spread-cost")
+    fixed_cost: float = Field(0.0, description="Fixed cost (euros/hour)", ge=0, ini_alias="fixed-cost")
+    startup_cost: float = Field(0.0, description="Startup cost (euros/startup)", ge=0, ini_alias="startup-cost")
+    market_bid_cost: float = Field(0.0, description="Market bid cost (euros/MWh)", ge=0, ini_alias="market-bid-cost")
+
+    # NOTE: The following fields are deprecated
+    # group_min_count: int = Field(0, description="Minimum number of group", ge=0, ini_alias="groupmincount")
+    # group_max_count: int = Field(0, description="Maximum number of group", ge=0, ini_alias="groupmaxcount")
+    # annuity_investment: int = Field(
+    #     0, description="Annuity investment (kEuros/MW)", ge=0, ini_alias="annuityinvestment")
+
+    # https://github.com/AntaresSimulatorTeam/Antares_Simulator/blob/develop/src/libs/antares/study/parts/thermal/pollutant.h
 
     co2: float = Field(0.0, description="Emission rate of CO2 (t/MWh)", ge=0)
     nh3: float = Field(0.0, description="Emission rate of NH3 (t/MWh)", ge=0)
@@ -105,7 +118,7 @@ class ThermalManager:
         )
         # Spinning (%)
         thermal_config["spinning"] = thermal_config.get("spinning", 0) * 100
-        return ThermalFormFields.construct(**thermal_config)
+        return ThermalFormFields.from_ini(thermal_config)
 
     def set_field_values(
         self,
@@ -125,9 +138,10 @@ class ThermalManager:
         """
         # NOTE: The form field names are in camelCase,
         # while the configuration field names are in snake_case.
-        thermal_config = json.loads(field_values.json(by_alias=False))
-        # Spinning (%)
-        thermal_config["spinning"] = thermal_config["spinning"] / 100
+        thermal_config = field_values.to_ini()
+        if "spinning" in thermal_config:
+            # Spinning (%)
+            thermal_config["spinning"] = thermal_config["spinning"] / 100
         command = UpdateConfig(
             target=THERMAL_PATH.format(area=area_id, cluster=cluster_id),
             data=thermal_config,

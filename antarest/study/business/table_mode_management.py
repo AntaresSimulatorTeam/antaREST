@@ -1,15 +1,8 @@
 from enum import Enum
-from typing import (
-    Optional,
-    Dict,
-    TypedDict,
-    Union,
-    Any,
-    List,
-)
+from typing import Any, Dict, List, Optional, TypedDict, Union
 
 from pydantic import StrictFloat
-from pydantic.types import StrictStr, StrictInt, StrictBool
+from pydantic.types import StrictBool, StrictInt, StrictStr
 
 from antarest.study.business.binding_constraint_management import (
     BindingConstraintManager,
@@ -18,21 +11,21 @@ from antarest.study.business.renewable_management import (
     TimeSeriesInterpretation,
 )
 from antarest.study.business.thermal_management import (
-    TimeSeriesGenerationOption,
     LawOption,
+    TimeSeriesGenerationOption,
 )
 from antarest.study.business.utils import (
     FormFieldsBaseModel,
     execute_or_add_commands,
 )
+from antarest.study.common.default_values import (
+    FilteringOptions,
+    LinkProperties,
+    NodalOptimization,
+)
 from antarest.study.model import RawStudy
 from antarest.study.storage.rawstudy.model.filesystem.factory import FileStudy
 from antarest.study.storage.storage_service import StudyStorageService
-from antarest.study.common.default_values import (
-    NodalOptimization,
-    FilteringOptions,
-    LinkProperties,
-)
 from antarest.study.storage.variantstudy.model.command.icommand import ICommand
 from antarest.study.storage.variantstudy.model.command.update_binding_constraint import (
     UpdateBindingConstraint,
@@ -322,7 +315,7 @@ FIELDS_INFO_BY_TYPE: Dict[TableTemplateType, Dict[str, ColumnInfo]] = {
         },
         "ts_gen": {
             "path": f"{CLUSTER_FIELD_PATH_BASE}/gen-ts",
-            "default_value": TimeSeriesGenerationOption.USE_GLOBAL_PARAMETER.value,
+            "default_value": TimeSeriesGenerationOption.USE_GLOBAL.value,
         },
         "volatility_forced": {
             "path": f"{CLUSTER_FIELD_PATH_BASE}/volatility.forced",
