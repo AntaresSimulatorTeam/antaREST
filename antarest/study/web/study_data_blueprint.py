@@ -62,7 +62,8 @@ from antarest.study.business.thematic_trimming_management import (
 )
 from antarest.study.business.thermal_management import (
     ThermalFormFields,
-    TimeSeriesGenerationOption, ThermalFieldsNotFoundError,
+    TimeSeriesGenerationOption,
+    ThermalFieldsNotFoundError,
 )
 from antarest.study.business.timeseries_config_management import TSFormFields
 from antarest.study.model import PatchArea, PatchCluster
