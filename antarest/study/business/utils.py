@@ -5,13 +5,17 @@ from typing import (
     List,
     Optional,
     Sequence,
+    Set,
     Tuple,
     Type,
     TypedDict,
     TypeVar,
 )
 
+import pydantic.error_wrappers
+import pydantic.fields
 import pydantic.main
+import pydantic.utils
 from antarest.core.exceptions import CommandApplicationError
 from antarest.core.jwt import DEFAULT_ADMIN_USER
 from antarest.core.requests import RequestParameters
@@ -24,7 +28,7 @@ from antarest.study.storage.variantstudy.business.utils import (
     transform_command_to_dto,
 )
 from antarest.study.storage.variantstudy.model.command.icommand import ICommand
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, ValidationError
 
 # noinspection SpellCheckingInspection
 GENERAL_DATA_PATH = "settings/generaldata"
@@ -52,6 +56,11 @@ def execute_or_add_commands(
             transform_command_to_dto(commands, force_aggregate=True),
             RequestParameters(user=DEFAULT_ADMIN_USER),
         )
+
+
+# ====================================================================
+#  Utility classes and function to make all Pydantic fields optionals
+# ====================================================================
 
 
 class AllOptionalMetaclass(pydantic.main.ModelMetaclass):
@@ -96,6 +105,53 @@ class AllOptionalMetaclass(pydantic.main.ModelMetaclass):
         return super().__new__(cls, name, bases, namespaces, **kwargs)
 
 
+def create_field(
+    default: Any = pydantic.fields.Undefined, **kwargs: Any
+) -> Any:
+    """
+    Create an optional Pydantic field.
+    """
+    return pydantic.fields.Field(None, ini_default=default, **kwargs)
+
+
+Field = create_field
+
+
+# ==============================================================
+#  Helper fonctions to get/set values from/to a dictionary tree
+# ==============================================================
+
+
+def _get_tree_value(
+    tree: Dict[str, Any], path: str, default: Any = None
+) -> Any:
+    """
+    Retrieves the value of a dictionary tree based on a given path.
+    """
+    for key in path.split("/"):
+        if key in tree:
+            tree = tree[key]
+        else:
+            return default
+    return tree
+
+
+def _set_tree_value(tree: Dict[str, Any], path: str, value: Any) -> None:
+    """
+    Update or set the value of a dictionary tree based on a given path.
+    """
+    parts = path.split("/")
+    for part in parts[:-1]:
+        if part not in tree:
+            tree[part] = {}
+        tree = tree[part]
+    tree[parts[-1]] = value
+
+
+# ==============================================================
+#  FormFieldsBaseModel model with support for INI configuration
+# ==============================================================
+
 # A variable annotated with "M" can only be an instance of `FormFieldsBaseModel`
 # or an instance of a class inheriting from `FormFieldsBaseModel`.
 M = TypeVar("M", bound="FormFieldsBaseModel")
@@ -111,22 +167,32 @@ class FormFieldsBaseModel(BaseModel):
         extra = Extra.forbid
 
     @classmethod
-    def from_ini(cls: Type[M], ini_attrs: Dict[str, Any]) -> M:
+    def from_ini(
+        cls: Type[M], ini_attrs: Dict[str, Any], study_version: int
+    ) -> M:
         """
         Creates an instance of `FormFieldsBaseModel` from the given INI attributes.
 
         The conversion between the attribute names and the field names is ensured
-        by the presence of an `ini_path` attribute when defining each field:
+        by the presence of an `ini_path` property when defining each field.
+
+        The model construction must take into account the study version.
+        The `start_version` and `end_version` properties can be defined in the
+        `Config` class of the model to specify an availability interval to be applied
+        by default for all fields. In order to specify the specific availability
+        interval for each field, the properties can be set in the field.
 
         Example:
 
             class ThermalFormFields(FormFieldsBaseModel):
                 ...
                 must_run: bool = Field(False, ini_path="must-run")
+                nh3: float = Field(0.0, ge=0, start_version=860)
 
         Args:
             cls: The class itself, or any subclass.
             ini_attrs: A dictionary containing the INI attributes to use for constructing the instance.
+            study_version: Version of the current study.
 
         Returns:
             An instance of `FormFieldsBaseModel`.
@@ -134,41 +200,122 @@ class FormFieldsBaseModel(BaseModel):
         Raises:
             ValidationError: If there are extra fields not permitted.
         """
-        aliases = {
-            field.field_info.extra.get("ini_path", name): name
+        model_start_ver: int = getattr(cls.Config, "start_version", 0)
+        model_end_ver: int = getattr(cls.Config, "end_version", 0)
+        fields_values = {}
+        err_wrappers = []
+        for field_name, field in cls.__fields__.items():
+            # Extract the properties from the `field_info.extra` values
+            extra = field.field_info.extra
+            ini_path: str = extra.get("ini_path", field_name)
+            ini_default: str = extra.get("ini_default", field.default)
+            start_ver: int = extra.get("start_version", 0) or model_start_ver
+            end_ver: int = extra.get("end_version", 0) or model_end_ver
+
+            # Get the field value from the `ini_attrs`
+            is_available = (
+                start_ver <= study_version <= end_ver
+                if end_ver
+                else start_ver <= study_version
+            )
+            default = (
+                (
+                    field.default_factory()  # type: ignore
+                    if ini_default is None
+                    else pydantic.utils.smart_deepcopy(ini_default)
+                )
+                if is_available
+                else None
+            )
+            field_value = _get_tree_value(ini_attrs, ini_path, default=default)
+
+            # Check the field value according to its availability
+            if is_available:
+                if field.required and field_value is None:
+                    err_wrappers.append(
+                        pydantic.error_wrappers.ErrorWrapper(
+                            ValueError(
+                                f"Required parameter '{ini_path}' is missing"
+                            ),
+                            loc=field_name,
+                        )
+                    )
+            elif field_value is not None:
+                err_wrappers.append(
+                    pydantic.error_wrappers.ErrorWrapper(
+                        ValueError(
+                            f"Parameter '{ini_path}' is not available in the study version {study_version}"
+                        ),
+                        loc=field_name,
+                    )
+                )
+            fields_values[field_name] = field_value
+
+        # Report an error for each unknown `ini_path`
+        known_paths: Set[str] = {
+            field.field_info.extra.get("ini_path", name)
             for name, field in cls.__fields__.items()
         }
-        fields_values = {
-            aliases.get(ini_name, ini_name): value
-            for ini_name, value in ini_attrs.items()
-        }
-        return cls.construct(**fields_values)
+        err_wrappers.extend(
+            pydantic.error_wrappers.ErrorWrapper(
+                ValueError(f"Parameter '{ini_path}' is unknown"), loc=ini_path
+            )
+            for ini_path in ini_attrs
+            if ini_path not in known_paths
+        )
 
-    def to_ini(self) -> Dict[str, Any]:
-        """
-        Converts the instance of `FormFieldsBaseModel` to a dictionary of INI attributes.
+        if err_wrappers:
+            raise ValidationError(err_wrappers, cls)
 
-        In the INI file, there are only required values or non-default values.
+        return cls(**fields_values)
 
-        The conversion between the field names and the attribute names is ensured
-        by the presence of an `ini_path` attribute when defining each field.
-
-        Example:
-
-            class ThermalFormFields(FormFieldsBaseModel):
-                ...
-                must_run: bool = Field(False, ini_path="must-run")
-
-        Returns:
-            A dictionary of INI attributes.
-        """
+    def to_ini(self, study_version: int) -> Dict[str, Any]:
+        model_start_ver: int = getattr(self.Config, "start_version", 0)
+        model_end_ver: int = getattr(self.Config, "end_version", 0)
         fields_values = json.loads(self.json(by_alias=False))
-        ini_attrs = {}
-        for name, field in self.__fields__.items():
-            ini_path = field.field_info.extra.get("ini_path", name)
-            value = fields_values[name]
-            if field.required or value != field.get_default():
-                ini_attrs[ini_path] = value
+        ini_attrs: Dict[str, Any] = {}
+        err_wrappers = []
+        for field_name, field in self.__fields__.items():
+            # Extract the properties from the `field_info.extra` values
+            extra = field.field_info.extra
+            ini_path: str = extra.get("ini_path", field_name)
+            start_ver: int = extra.get("start_version", 0) or model_start_ver
+            end_ver: int = extra.get("end_version", 0) or model_end_ver
+
+            # Set the field value to the `ini_attrs`
+            is_available = (
+                start_ver <= study_version <= end_ver
+                if end_ver
+                else start_ver <= study_version
+            )
+            field_value = fields_values.get(field_name)
+
+            if is_available:
+                if field.required and field_value is None:
+                    err_wrappers.append(
+                        pydantic.error_wrappers.ErrorWrapper(
+                            ValueError(
+                                f"Required parameter '{ini_path}' is missing"
+                            ),
+                            loc=field_name,
+                        )
+                    )
+            elif field_value is not None:
+                err_wrappers.append(
+                    pydantic.error_wrappers.ErrorWrapper(
+                        ValueError(
+                            f"Parameter '{ini_path}' is not available in the study version {study_version}"
+                        ),
+                        loc=field_name,
+                    )
+                )
+
+            if field_value is not None:
+                _set_tree_value(ini_attrs, ini_path, field_value)
+
+        if err_wrappers:
+            raise ValidationError(err_wrappers, self.__class__)
+
         return ini_attrs
 
 
