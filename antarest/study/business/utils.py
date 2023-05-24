@@ -5,13 +5,13 @@ from typing import (
     List,
     Optional,
     Sequence,
+    Tuple,
     Type,
     TypedDict,
     TypeVar,
 )
 
-from pydantic import BaseModel, Extra
-
+import pydantic.main
 from antarest.core.exceptions import CommandApplicationError
 from antarest.core.jwt import DEFAULT_ADMIN_USER
 from antarest.core.requests import RequestParameters
@@ -24,6 +24,7 @@ from antarest.study.storage.variantstudy.business.utils import (
     transform_command_to_dto,
 )
 from antarest.study.storage.variantstudy.model.command.icommand import ICommand
+from pydantic import BaseModel, Extra
 
 # noinspection SpellCheckingInspection
 GENERAL_DATA_PATH = "settings/generaldata"
@@ -53,7 +54,49 @@ def execute_or_add_commands(
         )
 
 
-# A variable annotated with T can only be an instance of `FormFieldsBaseModel`
+class AllOptionalMetaclass(pydantic.main.ModelMetaclass):
+    """
+    Metaclass that makes all fields of a Pydantic model optional.
+
+    This metaclass modifies the class's annotations to make all fields
+    optional by wrapping them with the `Optional` type.
+
+    Usage:
+        class MyModel(BaseModel, metaclass=AllOptionalMetaclass):
+            field1: str
+            field2: int
+            ...
+
+    The fields defined in the model will be automatically converted to optional
+    fields, allowing instances of the model to be created even if not all fields
+    are provided during initialization.
+    """
+
+    def __new__(
+        cls: Type["AllOptionalMetaclass"],
+        name: str,
+        bases: Tuple[Type[Any], ...],
+        namespaces: Dict[str, Any],
+        **kwargs: Dict[str, Any],
+    ) -> Any:
+        annotations = namespaces.get("__annotations__", {})
+
+        # Merge annotations from base classes
+        for base in bases:
+            annotations.update(getattr(base, "__annotations__", {}))
+
+        # Convert fields to optional
+        for field in annotations:
+            if not field.startswith("__"):
+                annotations[field] = Optional[annotations[field]]
+
+        # Update the class's annotations
+        namespaces["__annotations__"] = annotations
+
+        return super().__new__(cls, name, bases, namespaces, **kwargs)
+
+
+# A variable annotated with "M" can only be an instance of `FormFieldsBaseModel`
 # or an instance of a class inheriting from `FormFieldsBaseModel`.
 M = TypeVar("M", bound="FormFieldsBaseModel")
 
