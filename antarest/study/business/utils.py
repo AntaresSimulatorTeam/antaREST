@@ -73,13 +73,13 @@ class FormFieldsBaseModel(BaseModel):
         Creates an instance of `FormFieldsBaseModel` from the given INI attributes.
 
         The conversion between the attribute names and the field names is ensured
-        by the presence of an `ini_alias` attribute when defining each field:
+        by the presence of an `ini_path` attribute when defining each field:
 
         Example:
 
             class ThermalFormFields(FormFieldsBaseModel):
                 ...
-                must_run: bool = Field(False, ini_alias="must-run")
+                must_run: bool = Field(False, ini_path="must-run")
 
         Args:
             cls: The class itself, or any subclass.
@@ -92,7 +92,7 @@ class FormFieldsBaseModel(BaseModel):
             ValidationError: If there are extra fields not permitted.
         """
         aliases = {
-            field.field_info.extra.get("ini_alias", name): name
+            field.field_info.extra.get("ini_path", name): name
             for name, field in cls.__fields__.items()
         }
         fields_values = {
@@ -108,13 +108,13 @@ class FormFieldsBaseModel(BaseModel):
         In the INI file, there are only required values or non-default values.
 
         The conversion between the field names and the attribute names is ensured
-        by the presence of an `ini_alias` attribute when defining each field.
+        by the presence of an `ini_path` attribute when defining each field.
 
         Example:
 
             class ThermalFormFields(FormFieldsBaseModel):
                 ...
-                must_run: bool = Field(False, ini_alias="must-run")
+                must_run: bool = Field(False, ini_path="must-run")
 
         Returns:
             A dictionary of INI attributes.
@@ -122,10 +122,10 @@ class FormFieldsBaseModel(BaseModel):
         fields_values = json.loads(self.json(by_alias=False))
         ini_attrs = {}
         for name, field in self.__fields__.items():
-            ini_alias = field.field_info.extra.get("ini_alias", name)
+            ini_path = field.field_info.extra.get("ini_path", name)
             value = fields_values[name]
             if field.required or value != field.get_default():
-                ini_attrs[ini_alias] = value
+                ini_attrs[ini_path] = value
         return ini_attrs
 
 
