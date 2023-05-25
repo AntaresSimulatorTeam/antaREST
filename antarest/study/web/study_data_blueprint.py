@@ -1570,7 +1570,7 @@ def create_study_data_routes(
         )
         params = RequestParameters(user=current_user)
         study = study_service.check_study_access(
-            uuid, StudyPermissionType.WRITE, params
+            uuid, StudyPermissionType.DELETE, params
         )
         study_service.thermal_manager.delete_cluster(
             study, area_id, cluster_id
