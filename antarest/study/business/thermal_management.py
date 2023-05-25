@@ -1,8 +1,8 @@
 from enum import Enum
 
-from pydantic import Field
-
 from antarest.study.business.utils import (
+    AllOptionalMetaclass,
+    Field,
     FormFieldsBaseModel,
     execute_or_add_commands,
 )
@@ -28,7 +28,7 @@ class LawOption(str, Enum):
 
 
 # noinspection SpellCheckingInspection
-class ThermalFormFields(FormFieldsBaseModel):
+class ThermalFormFields(FormFieldsBaseModel, metaclass=AllOptionalMetaclass):
     """
     Pydantic model representing thermal cluster configuration form fields.
     """
@@ -127,7 +127,7 @@ class ThermalManager:
                 f"Fields of thermal cluster '{cluster_id}' not found in '{area_id}'"
             ) from None
         else:
-            return ThermalFormFields.from_ini(thermal_config)
+            return ThermalFormFields.from_ini(thermal_config, study_version=int(study.version))
         # fmt: on
 
     def set_field_values(
@@ -148,7 +148,7 @@ class ThermalManager:
         """
         # NOTE: The form field names are in camelCase,
         # while the configuration field names are in snake_case.
-        thermal_config = field_values.to_ini()
+        thermal_config = field_values.to_ini(study_version=int(study.version))
         command = UpdateConfig(
             target=THERMAL_PATH.format(area=area_id, cluster=cluster_id),
             data=thermal_config,
