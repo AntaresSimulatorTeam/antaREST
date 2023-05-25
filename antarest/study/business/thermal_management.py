@@ -17,7 +17,7 @@ from antarest.study.storage.variantstudy.model.command.update_config import (
 
 
 class TimeSeriesGenerationOption(str, Enum):
-    USE_GLOBAL = "use global"
+    USE_GLOBAL = "use global parameter"
     FORCE_NO_GENERATION = "force no generation"
     FORCE_GENERATION = "force generation"
 
