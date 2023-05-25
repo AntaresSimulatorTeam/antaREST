@@ -37,9 +37,6 @@ class ThermalFormFields(FormFieldsBaseModel):
         # Allow direct conversion from INI values
         allow_population_by_field_name = True
 
-    # https://github.com/AntaresSimulatorTeam/Antares_Simulator/blob/develop/src/libs/antares/study/parts/thermal/cluster.h
-    # https://github.com/AntaresSimulatorTeam/Antares_Simulator/blob/develop/src/libs/antares/study/parts/thermal/cluster_list.cpp
-
     # fmt: off
     group: str = ""
     name: str = ""
@@ -64,14 +61,6 @@ class ThermalFormFields(FormFieldsBaseModel):
     startup_cost: float = Field(0.0, description="Startup cost (euros/startup)", ge=0, ini_path="startup-cost")
     market_bid_cost: float = Field(0.0, description="Market bid cost (euros/MWh)", ge=0, ini_path="market-bid-cost")
 
-    # NOTE: The following fields are deprecated
-    # group_min_count: int = Field(0, description="Minimum number of group", ge=0, ini_path="groupmincount")
-    # group_max_count: int = Field(0, description="Maximum number of group", ge=0, ini_path="groupmaxcount")
-    # annuity_investment: int = Field(
-    #     0, description="Annuity investment (kEuros/MW)", ge=0, ini_path="annuityinvestment")
-
-    # https://github.com/AntaresSimulatorTeam/Antares_Simulator/blob/develop/src/libs/antares/study/parts/thermal/pollutant.h
-
     co2: float = Field(0.0, description="Emission rate of CO2 (t/MWh)", ge=0)
     nh3: float = Field(0.0, description="Emission rate of NH3 (t/MWh)", ge=0, start_version=860)
     so2: float = Field(0.0, description="Emission rate of SO2 (t/MWh)", ge=0, start_version=860)
@@ -86,6 +75,14 @@ class ThermalFormFields(FormFieldsBaseModel):
     op4: float = Field(0.0, description="Emission rate of pollutant 4 (t/MWh)", ge=0, start_version=860)
     op5: float = Field(0.0, description="Emission rate of pollutant 5 (t/MWh)", ge=0, start_version=860)
     # fmt: on
+
+    # NOTE: The following fields are deprecated, do not add it.
+    # group_min_count: int = Field(
+    #     0, description="Minimum number of group", ge=0, ini_path="groupmincount")
+    # group_max_count: int = Field(
+    #     0, description="Maximum number of group", ge=0, ini_path="groupmaxcount")
+    # annuity_investment: int = Field(
+    #     0, description="Annuity investment (kEuros/MW)", ge=0, ini_path="annuityinvestment")
 
 
 THERMAL_PATH = "input/thermal/clusters/{area}/list/{cluster}"
