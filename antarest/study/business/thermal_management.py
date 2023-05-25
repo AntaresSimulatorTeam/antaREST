@@ -76,7 +76,7 @@ class ThermalFormFields(FormFieldsBaseModel):
     nh3: float = Field(0.0, description="Emission rate of NH3 (t/MWh)", ge=0, start_version=860)
     so2: float = Field(0.0, description="Emission rate of SO2 (t/MWh)", ge=0, start_version=860)
     nox: float = Field(0.0, description="Emission rate of NOX (t/MWh)", ge=0, start_version=860)
-    pm2_5: float = Field(0.0, description="Emission rate of PM 2.5 (t/MWh)", ge=0, alias="pm25", start_version=860)
+    pm2_5: float = Field(0.0, description="Emission rate of PM 2.5 (t/MWh)", ge=0, start_version=860)
     pm5: float = Field(0.0, description="Emission rate of PM 5 (t/MWh)", ge=0, start_version=860)
     pm10: float = Field(0.0, description="Emission rate of PM 10 (t/MWh)", ge=0, start_version=860)
     nmvoc: float = Field(0.0, description="Emission rate of NMVOC (t/MWh)", ge=0, start_version=860)
