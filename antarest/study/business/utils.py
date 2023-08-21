@@ -32,13 +32,16 @@ def execute_or_add_commands(
     file_study: FileStudy,
     commands: Sequence[ICommand],
     storage_service: StudyStorageService,
+    code_error: Optional[int] = None,
 ) -> None:
     if isinstance(study, RawStudy):
         executed_commands: MutableSequence[ICommand] = []
         for command in commands:
             result = command.apply(file_study)
             if not result.status:
-                raise CommandApplicationError(result.message)
+                raise CommandApplicationError(
+                    result.message, code_error=code_error
+                )
             executed_commands.append(command)
         storage_service.variant_study_service.invalidate_cache(study)
         if not is_managed(study):

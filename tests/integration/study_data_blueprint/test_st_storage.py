@@ -265,7 +265,7 @@ class TestSTStorage:
             f"/v1/studies/{study_id}/areas/{bad_area_id}/storages/{siemens_battery_id}",
             headers={"Authorization": f"Bearer {user_access_token}"},
         )
-        assert res.status_code == 500, res.json()
+        assert res.status_code == 404, res.json()
         obj = res.json()
         description = obj["description"]
         assert bad_area_id in description
@@ -325,7 +325,7 @@ class TestSTStorage:
             headers={"Authorization": f"Bearer {user_access_token}"},
             json={"name": siemens_battery, "group": "Battery"},
         )
-        assert res.status_code == 500, res.json()
+        assert res.status_code == 404, res.json()
         obj = res.json()
         description = obj["description"]
         assert bad_area_id in description

@@ -2,6 +2,7 @@ import logging
 import re
 from enum import Enum
 from typing import Any, Dict, List, Optional, Sequence, Tuple
+from http import HTTPStatus
 
 from pydantic import BaseModel
 
@@ -35,6 +36,8 @@ from antarest.study.storage.variantstudy.model.command.update_config import (
 )
 
 logger = logging.getLogger(__name__)
+
+CONFLICT_ERROR = 409
 
 
 class AreaType(Enum):
@@ -378,7 +381,11 @@ class AreaManager:
             command_context=self.storage_service.variant_study_service.command_factory.command_context,
         )
         execute_or_add_commands(
-            study, file_study, [command], self.storage_service
+            study,
+            file_study,
+            [command],
+            self.storage_service,
+            code_error=HTTPStatus.CONFLICT,
         )
         area_id = transform_name_to_id(area_creation_info.name)
         patch = self.patch_service.get(study)

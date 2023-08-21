@@ -2,6 +2,8 @@ import functools
 import json
 import operator
 from typing import Any, Dict, List, Mapping, MutableMapping, Optional, Sequence
+from http import HTTPStatus
+
 
 import numpy as np
 
@@ -468,7 +470,11 @@ class STStorageManager:
         )
         file_study = self.storage_service.get_storage(study).get_raw(study)
         execute_or_add_commands(
-            study, file_study, [command], self.storage_service
+            study,
+            file_study,
+            [command],
+            self.storage_service,
+            code_error=HTTPStatus.NOT_FOUND,
         )
 
     def get_matrix(

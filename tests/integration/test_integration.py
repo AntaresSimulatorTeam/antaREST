@@ -646,7 +646,7 @@ def test_area_management(app: FastAPI):
             "metadata": {"country": "FR"},
         },
     )
-    assert res.status_code == 500
+    assert res.status_code == 409
     assert res.json() == {
         "description": "Area 'area 1' already exists and could not be created",
         "exception": "CommandApplicationError",
