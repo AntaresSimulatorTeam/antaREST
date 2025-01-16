@@ -166,3 +166,7 @@ class CreateDistrict(ICommand):
     @override
     def get_inner_matrices(self) -> List[str]:
         return []
+
+    @override
+    def can_update_study_config(self) -> bool:
+        return True

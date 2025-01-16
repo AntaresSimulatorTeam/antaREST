@@ -223,3 +223,7 @@ class RemoveCluster(ICommand):
                 study_data.tree.delete(["input", "bindingconstraints", matrix_id])
 
         study_data.tree.save(binding_constraints, url)
+
+    @override
+    def can_update_study_config(self) -> bool:
+        return True

@@ -83,7 +83,7 @@ class CreateRenewablesCluster(ICommand):
 
         # Check if the cluster already exists in the area
         version = study_data.version
-        cluster = create_renewable_config(version, name=self.cluster_name)
+        cluster = create_renewable_config(version, **self.parameters)
         if any(cl.id == cluster.id for cl in area.renewables):
             return (
                 CommandOutput(
@@ -187,3 +187,7 @@ class CreateRenewablesCluster(ICommand):
     @override
     def get_inner_matrices(self) -> t.List[str]:
         return []
+
+    @override
+    def can_update_study_config(self) -> bool:
+        return True
