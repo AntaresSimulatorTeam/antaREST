@@ -123,7 +123,6 @@ function BindingConstView({ constraintId }: Props) {
             <Box sx={{ alignSelf: "flex-end" }}>
               <Button
                 variant="outlined"
-                size="small"
                 startIcon={<Delete />}
                 color="error"
                 onClick={() => setDeleteConstraintDialogOpen(true)}

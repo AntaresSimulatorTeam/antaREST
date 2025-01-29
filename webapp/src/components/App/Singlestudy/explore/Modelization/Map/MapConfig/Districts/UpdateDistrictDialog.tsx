@@ -104,7 +104,6 @@ function UpdateDistrictDialog(props: Props) {
           <SelectFE
             name="districtId"
             label={t("study.modelization.map.districts")}
-            variant="filled"
             options={districtsOptions}
             control={control}
             onChange={(e) => {
@@ -138,7 +137,6 @@ function UpdateDistrictDialog(props: Props) {
           <Button
             color="error"
             variant="outlined"
-            size="small"
             disabled={getValues("districtId") === ""}
             startIcon={<DeleteIcon />}
             onClick={() => setOpenConfirmationModal(true)}

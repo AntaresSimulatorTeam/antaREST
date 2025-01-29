@@ -109,7 +109,6 @@ function Districts() {
         <Button
           color="primary"
           variant="outlined"
-          size="small"
           startIcon={<AddIcon />}
           onClick={() => setCreateDistrictDialogOpen(true)}
           sx={{ mr: 1 }}
@@ -119,7 +118,6 @@ function Districts() {
         <Button
           color="primary"
           variant="outlined"
-          size="small"
           startIcon={<EditIcon />}
           onClick={() => setUpdateDistrictDialogOpen(true)}
         >

@@ -12,15 +12,15 @@
  * This file is part of the Antares project.
  */
 
-import type { Cluster } from "../../../../../../../common/types";
-import Matrix from "../../../../../../common/Matrix";
+import type { Cluster } from "@/common/types";
+import Matrix from "../../../../../../../common/Matrix";
 
 interface Props {
   areaId: string;
   clusterId: Cluster["id"];
 }
 
-function RenewablesMatrix({ areaId, clusterId }: Props) {
+function RenewableMatrix({ areaId, clusterId }: Props) {
   return (
     <Matrix
       url={`input/renewables/series/${areaId}/${clusterId}/series`}
@@ -30,4 +30,4 @@ function RenewablesMatrix({ areaId, clusterId }: Props) {
   );
 }
 
-export default RenewablesMatrix;
+export default RenewableMatrix;

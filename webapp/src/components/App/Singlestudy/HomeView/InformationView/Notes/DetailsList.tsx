@@ -36,7 +36,6 @@ function DetailsList({ items }: Props) {
     <List
       sx={{
         width: 1,
-        backgroundColor: "#222333",
       }}
     >
       {items.map((item) => (

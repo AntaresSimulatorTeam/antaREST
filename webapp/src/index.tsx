@@ -14,12 +14,11 @@
 
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import { StyledEngineProvider } from "@mui/material";
-import "./index.css";
 import App from "./components/App";
 import { initConfig, type Config } from "./services/config";
 import storage, { StorageKey } from "./services/utils/localStorage";
 import store from "./redux/store";
+import ThemeWrapper from "./components/wrappers/ThemeWrapper";
 
 initConfig((config: Config) => {
   const versionInstalled = storage.getItem(StorageKey.Version);
@@ -32,10 +31,10 @@ initConfig((config: Config) => {
   const root = createRoot(container);
 
   root.render(
-    <StyledEngineProvider injectFirst>
+    <ThemeWrapper>
       <Provider store={store}>
         <App />
       </Provider>
-    </StyledEngineProvider>,
+    </ThemeWrapper>,
   );
 });

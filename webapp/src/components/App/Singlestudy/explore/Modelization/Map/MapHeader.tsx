@@ -69,7 +69,6 @@ function MapHeader(props: Props) {
             label={name}
             color={currentLayerId === id ? "secondary" : "default"}
             clickable
-            size="small"
             sx={{ m: 1 }}
             onClick={() => handleLayerClick(id)}
           />

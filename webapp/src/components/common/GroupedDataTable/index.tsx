@@ -215,7 +215,6 @@ function GroupedDataTable<TGroups extends string[], TData extends TRow<TGroups[n
           <Button
             startIcon={<AddCircleOutlineIcon />}
             variant="contained"
-            size="small"
             onClick={() => setOpenDialog("add")}
           >
             {t("button.add")}
@@ -225,7 +224,6 @@ function GroupedDataTable<TGroups extends string[], TData extends TRow<TGroups[n
           <Button
             startIcon={<ContentCopyIcon />}
             variant="outlined"
-            size="small"
             onClick={() => setOpenDialog("duplicate")}
             disabled={table.getSelectedRowModel().rows.length !== 1}
           >
@@ -237,7 +235,6 @@ function GroupedDataTable<TGroups extends string[], TData extends TRow<TGroups[n
             startIcon={<DeleteOutlineIcon />}
             color="error"
             variant="outlined"
-            size="small"
             onClick={() => setOpenDialog("delete")}
             disabled={table.getSelectedRowModel().rows.length === 0}
           >

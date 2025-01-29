@@ -24,18 +24,22 @@ export const MatrixContainer = styled(Box)(() => ({
   overflow: "hidden",
 }));
 
-export const MatrixHeader = styled(Box)(() => ({
+export const MatrixHeader = styled(Box)(({ theme }) => ({
   width: "100%",
   display: "flex",
-  flexFlow: "row wrap",
+  flexWrap: "wrap",
   justifyContent: "space-between",
-  alignItems: "flex-end",
+  alignItems: "center",
+  padding: theme.spacing(1),
 }));
 
-export const MatrixTitle = styled(Typography)(() => ({
+export const MatrixTitle = styled(Typography)(({ theme }) => ({
   fontSize: 20,
   fontWeight: 400,
   lineHeight: 1,
+  // Allows you to keep space with action buttons when they are below
+  marginTop: theme.spacing(0.5),
+  marginBottom: theme.spacing(0.5),
 }));
 
 export const darkTheme: Theme = {

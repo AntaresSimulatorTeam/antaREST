@@ -95,7 +95,6 @@ function HeaderBottom(props: PropTypes) {
         {filters.managed && (
           <Chip
             label={t("studies.managedStudiesFilter")}
-            variant="filled"
             color="secondary"
             onDelete={() => setFilterValue("managed", false)}
             sx={{ mx: 1 }}
@@ -104,7 +103,6 @@ function HeaderBottom(props: PropTypes) {
         {filters.archived && (
           <Chip
             label={t("studies.archivedStudiesFilter")}
-            variant="filled"
             color="secondary"
             onDelete={() => setFilterValue("archived", false)}
             sx={{ mx: 1 }}
@@ -122,7 +120,6 @@ function HeaderBottom(props: PropTypes) {
           <Chip
             key={version}
             label={displayVersionName(version)}
-            variant="filled"
             color="primary"
             onDelete={() => {
               setFilterValue(
@@ -137,7 +134,6 @@ function HeaderBottom(props: PropTypes) {
           <Chip
             key={user.id}
             label={user.name}
-            variant="filled"
             onDelete={() => {
               setFilterValue(
                 "users",
@@ -151,7 +147,6 @@ function HeaderBottom(props: PropTypes) {
           <Chip
             key={group.id}
             label={group.name}
-            variant="filled"
             color="success"
             onDelete={() => {
               setFilterValue(
@@ -166,7 +161,6 @@ function HeaderBottom(props: PropTypes) {
           <Chip
             key={tag}
             label={tag}
-            variant="filled"
             onDelete={() => {
               setFilterValue(
                 "tags",

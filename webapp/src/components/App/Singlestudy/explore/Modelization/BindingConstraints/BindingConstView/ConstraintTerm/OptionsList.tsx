@@ -110,7 +110,6 @@ export default function OptionsList({
     <Box sx={{ display: "flex", gap: 1 }}>
       <SelectSingle
         disabled
-        size="small"
         variant="outlined"
         name="selectedArea"
         label={t(`study.${isLink ? "area1" : "area"}`)}
@@ -122,7 +121,6 @@ export default function OptionsList({
         }}
       />
       <SelectSingle
-        size="small"
         variant="outlined"
         name="selectedClusterOrArea"
         label={t(`study.${isLink ? "area2" : "cluster"}`)}

@@ -168,7 +168,6 @@ function DatasetCreationDialog(props: PropTypes) {
               boxSizing: "border-box",
               m: 2,
             }}
-            size="small"
             value={name}
             onChange={(event) => setName(event.target.value as string)}
             label={t("data.matrixName")}

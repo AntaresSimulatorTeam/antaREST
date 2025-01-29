@@ -12,7 +12,7 @@
  * This file is part of the Antares project.
  */
 
-import { Divider, Skeleton } from "@mui/material";
+import { Skeleton } from "@mui/material";
 import MatrixGrid from "./components/MatrixGrid";
 import { useMatrix } from "./hooks/useMatrix";
 import { useState } from "react";
@@ -127,7 +127,6 @@ function Matrix({
           canImport={canImport}
         />
       </MatrixHeader>
-      <Divider sx={{ width: 1, mt: 1, mb: 2 }} />
       {!data[0]?.length ? (
         <EmptyView title={t("matrix.message.matrixEmpty")} icon={GridOffIcon} />
       ) : (

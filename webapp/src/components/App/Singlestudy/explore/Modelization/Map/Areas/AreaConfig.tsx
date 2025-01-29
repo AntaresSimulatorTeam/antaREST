@@ -100,7 +100,6 @@ function AreaConfig(props: Props) {
           <TextField
             sx={{ mt: 1 }}
             label={t("study.modelization.map.areaName")}
-            variant="filled"
             value={currentArea.name}
             disabled
           />

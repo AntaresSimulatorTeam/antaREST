@@ -22,7 +22,7 @@ import useEnqueueErrorSnackbar from "../../../hooks/useEnqueueErrorSnackbar";
 import { toError } from "../../../utils/fnUtils";
 import { enqueueSnackbar } from "notistack";
 import type { PromiseAny } from "../../../utils/tsUtils";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 
 interface UploadDialogProps extends Omit<BasicDialogProps, "actions"> {
   dropzoneText?: string;
@@ -107,7 +107,7 @@ function UploadDialog(props: UploadDialogProps) {
     <BasicDialog
       {...dialogProps}
       title={title || t("global.import")}
-      titleIcon={FileDownloadIcon}
+      titleIcon={FileUploadIcon}
       actions={
         <Button onClick={onCancel} disabled={isUploading}>
           {t("global.close")}

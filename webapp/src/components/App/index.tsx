@@ -13,9 +13,8 @@
  */
 
 import { BrowserRouter as Router, Navigate, Route, Routes, Outlet } from "react-router-dom";
-import { CssBaseline, IconButton, ThemeProvider } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { SnackbarProvider, useSnackbar, type SnackbarKey } from "notistack";
-import maintheme from "../../theme";
 import MenuWrapper from "../wrappers/MenuWrapper";
 import Studies from "./Studies";
 import Data from "./Data";
@@ -56,11 +55,11 @@ import Districts from "./Singlestudy/explore/Modelization/Map/MapConfig/District
 import Allocation from "./Singlestudy/explore/Modelization/Areas/Hydro/Allocation";
 import Correlation from "./Singlestudy/explore/Modelization/Areas/Hydro/Correlation";
 import Storages from "./Singlestudy/explore/Modelization/Areas/Storages";
-import StorageForm from "./Singlestudy/explore/Modelization/Areas/Storages/Form";
+import StorageForm from "./Singlestudy/explore/Modelization/Areas/Storages/StorageConfig";
 import Thermal from "./Singlestudy/explore/Modelization/Areas/Thermal";
-import ThermalForm from "./Singlestudy/explore/Modelization/Areas/Thermal/Form";
+import ThermalConfig from "./Singlestudy/explore/Modelization/Areas/Thermal/ThermalConfig";
 import Renewables from "./Singlestudy/explore/Modelization/Areas/Renewables";
-import RenewableForm from "./Singlestudy/explore/Modelization/Areas/Renewables/Form";
+import RenewableConfig from "./Singlestudy/explore/Modelization/Areas/Renewables/RenewableConfig";
 import SplitHydroMatrix from "./Singlestudy/explore/Modelization/Areas/Hydro/SplitHydroMatrix";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -78,111 +77,106 @@ function SnackbarCloseButton({ snackbarKey }: { snackbarKey: SnackbarKey }) {
 function App() {
   return (
     <Router>
-      <ThemeProvider theme={maintheme}>
-        <SnackbarProvider
-          maxSnack={5}
-          autoHideDuration={3000}
-          action={(key) => <SnackbarCloseButton snackbarKey={key} />}
-        >
-          <CssBaseline />
-          <MaintenanceWrapper>
-            <LoginWrapper>
-              <MenuWrapper>
-                <Routes>
-                  <Route path="/studies" element={<Outlet />}>
-                    <Route index element={<Studies />} />
-                    <Route path=":studyId" element={<Outlet />}>
-                      <Route index element={<SingleStudy />} />
-                      <Route path="explore" element={<SingleStudy isExplorer />}>
-                        <Route path="modelization" element={<Modelization />}>
-                          <Route path="map" element={<Map />}>
-                            <Route path="layers" element={<Layers />} />
-                            <Route path="districts" element={<Districts />} />
-                          </Route>
-                          <Route path="area/:areaId" element={<Areas />}>
-                            <Route path="properties" element={<Properties />} />
-                            <Route path="load" element={<Load />} />
-                            <Route path="thermal" element={<Thermal />} />
-                            <Route path="thermal/:clusterId" element={<ThermalForm />} />
-                            <Route path="storages" element={<Storages />} />
-                            <Route path="storages/:storageId" element={<StorageForm />} />
-                            <Route path="hydro" element={<Navigate to="management" replace />} />
-                            <Route path="hydro" element={<Hydro />}>
-                              <Route path="management" element={<ManagementOptions />} />
-                              <Route path="allocation" element={<Allocation />} />
-                              <Route path="correlation" element={<Correlation />} />
-                              {HYDRO_ROUTES.map(
-                                ({ path, type, isSplitView, splitConfig, form }) => {
-                                  return isSplitView && splitConfig ? (
-                                    <Route
-                                      key={path}
-                                      path={path}
-                                      element={
-                                        <SplitHydroMatrix
-                                          types={[type, splitConfig.partnerType]}
-                                          direction={splitConfig.direction}
-                                          sizes={splitConfig.sizes}
-                                          form={form}
-                                        />
-                                      }
+      <SnackbarProvider
+        maxSnack={5}
+        autoHideDuration={3000}
+        action={(key) => <SnackbarCloseButton snackbarKey={key} />}
+      >
+        <MaintenanceWrapper>
+          <LoginWrapper>
+            <MenuWrapper>
+              <Routes>
+                <Route path="/studies" element={<Outlet />}>
+                  <Route index element={<Studies />} />
+                  <Route path=":studyId" element={<Outlet />}>
+                    <Route index element={<SingleStudy />} />
+                    <Route path="explore" element={<SingleStudy isExplorer />}>
+                      <Route path="modelization" element={<Modelization />}>
+                        <Route path="map" element={<Map />}>
+                          <Route path="layers" element={<Layers />} />
+                          <Route path="districts" element={<Districts />} />
+                        </Route>
+                        <Route path="area/:areaId" element={<Areas />}>
+                          <Route path="properties" element={<Properties />} />
+                          <Route path="load" element={<Load />} />
+                          <Route path="thermal" element={<Thermal />} />
+                          <Route path="thermal/:clusterId" element={<ThermalConfig />} />
+                          <Route path="storages" element={<Storages />} />
+                          <Route path="storages/:storageId" element={<StorageForm />} />
+                          <Route path="hydro" element={<Navigate to="management" replace />} />
+                          <Route path="hydro" element={<Hydro />}>
+                            <Route path="management" element={<ManagementOptions />} />
+                            <Route path="allocation" element={<Allocation />} />
+                            <Route path="correlation" element={<Correlation />} />
+                            {HYDRO_ROUTES.map(({ path, type, isSplitView, splitConfig, form }) => {
+                              return isSplitView && splitConfig ? (
+                                <Route
+                                  key={path}
+                                  path={path}
+                                  element={
+                                    <SplitHydroMatrix
+                                      types={[type, splitConfig.partnerType]}
+                                      direction={splitConfig.direction}
+                                      sizes={splitConfig.sizes}
+                                      form={form}
                                     />
-                                  ) : (
-                                    <Route
-                                      key={path}
-                                      path={path}
-                                      element={<HydroMatrix type={type} />}
-                                    />
-                                  );
-                                },
-                              )}
-                            </Route>
-                            <Route path="wind" element={<Wind />} />
-                            <Route path="solar" element={<Solar />} />
-                            <Route path="renewables" element={<Renewables />} />
-                            <Route path="renewables/:clusterId" element={<RenewableForm />} />
-                            <Route path="reserves" element={<Reserve />} />
-                            <Route path="miscGen" element={<MiscGen />} />
-                            <Route index element={<Properties />} />
-                            <Route path="*" element={<Properties />} />
+                                  }
+                                />
+                              ) : (
+                                <Route
+                                  key={path}
+                                  path={path}
+                                  element={<HydroMatrix type={type} />}
+                                />
+                              );
+                            })}
                           </Route>
-                          <Route path="links" element={<Links />} />
-                          <Route path="bindingcontraint" element={<BindingConstraints />} />
-                          <Route index element={<Map />} />
-                          <Route path="*" element={<Map />} />
+                          <Route path="wind" element={<Wind />} />
+                          <Route path="solar" element={<Solar />} />
+                          <Route path="renewables" element={<Renewables />} />
+                          <Route path="renewables/:clusterId" element={<RenewableConfig />} />
+                          <Route path="reserves" element={<Reserve />} />
+                          <Route path="miscGen" element={<MiscGen />} />
+                          <Route index element={<Properties />} />
+                          <Route path="*" element={<Properties />} />
                         </Route>
-                        <Route path="configuration" element={<Configuration />} />
-                        <Route path="tablemode" element={<TableModeList />} />
-                        <Route path="xpansion" element={<Xpansion />}>
-                          <Route path="candidates" element={<Candidates />} />
-                          <Route path="settings" element={<XpansionSettings />} />
-                          <Route path="constraints" element={<Constraints />} />
-                          <Route path="weights" element={<Weights />} />
-                          <Route path="capacities" element={<Capacities />} />
-                          <Route index element={<Candidates />} />
-                          <Route path="*" element={<Candidates />} />
-                        </Route>
-                        <Route path="results">
-                          <Route path=":outputId" element={<ResultDetails />} />
-                          <Route index element={<Results />} />
-                        </Route>
-                        <Route path="debug" element={<Debug />} />
-                        <Route path="*" element={<Modelization />}>
-                          <Route index element={<Map />} />
-                        </Route>
+                        <Route path="links" element={<Links />} />
+                        <Route path="bindingcontraint" element={<BindingConstraints />} />
+                        <Route index element={<Map />} />
+                        <Route path="*" element={<Map />} />
+                      </Route>
+                      <Route path="configuration" element={<Configuration />} />
+                      <Route path="tablemode" element={<TableModeList />} />
+                      <Route path="xpansion" element={<Xpansion />}>
+                        <Route path="candidates" element={<Candidates />} />
+                        <Route path="settings" element={<XpansionSettings />} />
+                        <Route path="constraints" element={<Constraints />} />
+                        <Route path="weights" element={<Weights />} />
+                        <Route path="capacities" element={<Capacities />} />
+                        <Route index element={<Candidates />} />
+                        <Route path="*" element={<Candidates />} />
+                      </Route>
+                      <Route path="results">
+                        <Route path=":outputId" element={<ResultDetails />} />
+                        <Route index element={<Results />} />
+                      </Route>
+                      <Route path="debug" element={<Debug />} />
+                      <Route path="*" element={<Modelization />}>
+                        <Route index element={<Map />} />
                       </Route>
                     </Route>
                   </Route>
-                  <Route path="/data" element={<Data />} />
-                  <Route path="/tasks" element={<Tasks />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/apidoc" element={<Api />} />
-                  <Route path="*" element={<Navigate to="/studies" />} />
-                </Routes>
-              </MenuWrapper>
-            </LoginWrapper>
-          </MaintenanceWrapper>
-        </SnackbarProvider>
-      </ThemeProvider>
+                </Route>
+                <Route path="/data" element={<Data />} />
+                <Route path="/tasks" element={<Tasks />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/apidoc" element={<Api />} />
+                <Route path="*" element={<Navigate to="/studies" />} />
+              </Routes>
+            </MenuWrapper>
+          </LoginWrapper>
+        </MaintenanceWrapper>
+      </SnackbarProvider>
     </Router>
   );
 }

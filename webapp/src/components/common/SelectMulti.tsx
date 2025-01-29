@@ -80,7 +80,6 @@ function SelectMulti(props: Props) {
         id={`multiple-checkbox-${name}`}
         multiple
         value={data}
-        variant="filled"
         onChange={handleChange}
         renderValue={tagsMode === true ? chipRender : checkboxRender}
       >

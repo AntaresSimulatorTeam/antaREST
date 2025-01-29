@@ -88,8 +88,8 @@ function CheckboxesTagsFE<
       renderOption={(props, option, { selected }) => (
         <li {...props}>
           <Checkbox
-            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-            checkedIcon={<CheckBoxIcon fontSize="small" />}
+            icon={<CheckBoxOutlineBlankIcon />}
+            checkedIcon={<CheckBoxIcon />}
             style={{ marginRight: 8 }}
             checked={selected}
           />
@@ -98,9 +98,7 @@ function CheckboxesTagsFE<
       )}
       renderInput={(params) => (
         <TextField
-          sx={{ m: 0 }}
           name={name}
-          variant="filled"
           label={label}
           error={error}
           helperText={helperText}

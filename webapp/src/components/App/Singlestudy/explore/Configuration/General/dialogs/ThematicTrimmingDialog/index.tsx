@@ -124,7 +124,6 @@ function ThematicTrimmingDialog(props: Props) {
               value={search}
               onSearchValueChange={setSearch}
               onClear={() => setSearch("")}
-              size="small"
             />
             <Stack direction="row" spacing={1}>
               <Button {...commonBtnProps} onClick={handleUpdateConfig(api, R.T)}>

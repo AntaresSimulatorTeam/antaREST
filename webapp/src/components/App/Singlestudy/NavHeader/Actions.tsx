@@ -130,35 +130,23 @@ function Actions({
         />
       </Tooltip>
       {isManaged ? (
-        <Chip label={t("study.managedStudy")} variant="filled" color="info" size="small" />
+        <Chip label={t("study.managedStudy")} color="info" />
       ) : (
-        <Chip label={study.workspace} variant="filled" size="small" />
+        <Chip label={study.workspace} />
       )}
-      {study.tags?.map((tag) => <Chip key={tag} label={tag} variant="filled" size="small" />)}
+      {study.tags?.map((tag) => <Chip key={tag} label={tag} />)}
       {isExplorer && (
-        <Button
-          size="small"
-          variant="contained"
-          color="primary"
-          onClick={isArchived ? onUnarchive : onLaunch}
-        >
+        <Button variant="contained" onClick={isArchived ? onUnarchive : onLaunch}>
           {isArchived ? t("global.unarchive") : t("global.launch")}
         </Button>
       )}
       <Divider flexItem orientation="vertical" />
       {study.type === StudyType.VARIANT && (
-        <Button
-          size="small"
-          variant="outlined"
-          color="primary"
-          onClick={onOpenCommands}
-          sx={{ minWidth: 0 }}
-        >
+        <Button variant="outlined" onClick={onOpenCommands} sx={{ minWidth: 0 }}>
           <HistoryOutlinedIcon />
         </Button>
       )}
       <Button
-        size="small"
         variant="outlined"
         color="primary"
         sx={{ width: "auto", minWidth: 0, px: 0 }}

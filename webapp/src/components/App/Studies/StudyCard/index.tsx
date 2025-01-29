@@ -155,7 +155,6 @@ const StudyCard = memo((props: Props) => {
 
   return (
     <Card
-      variant="outlined"
       sx={{
         width,
         height,
@@ -175,7 +174,6 @@ const StudyCard = memo((props: Props) => {
             position: "absolute",
             width: "100%",
             height: "100%",
-            background: "rgba(0,0,0,0.3)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -186,7 +184,6 @@ const StudyCard = memo((props: Props) => {
               fontSize: "68px",
               opacity: 0.7,
             }}
-            color="primary"
           />
         </Box>
       )}
@@ -217,7 +214,6 @@ const StudyCard = memo((props: Props) => {
               component="div"
               onClick={() => navigate(`/studies/${study.id}`)}
               sx={{
-                color: "white",
                 boxSizing: "border-box",
                 flexFlow: "nowrap",
                 width: "calc(100% - 64px)",
@@ -344,37 +340,30 @@ const StudyCard = memo((props: Props) => {
           }}
         >
           {study.archived && (
-            <Chip icon={<ArchiveOutlinedIcon />} label="archive" color="warning" size="small" />
+            <Chip icon={<ArchiveOutlinedIcon />} label="archive" color="warning" />
           )}
           {study.type === StudyType.VARIANT && (
             <Chip
               icon={<AltRouteOutlinedIcon />}
               label={t("studies.variant").toLowerCase()}
               color="primary"
-              size="small"
             />
           )}
           <Chip
             label={study.workspace}
-            size="small"
             sx={{
               bgcolor: study.managed ? "secondary.main" : "gray",
             }}
           />
-          {study.tags?.map((tag) => (
-            <Chip key={tag} label={tag} size="small" sx={{ bgcolor: indigo[300] }} />
-          ))}
+          {study.tags?.map((tag) => <Chip key={tag} label={tag} sx={{ bgcolor: indigo[300] }} />)}
         </Box>
       </CardContent>
       <CardActions>
         <NavLink to={`/studies/${study.id}`} style={{ textDecoration: "none" }}>
-          <Button size="small" color="primary">
-            {t("button.explore")}
-          </Button>
+          <Button color="primary">{t("button.explore")}</Button>
         </NavLink>
         <Tooltip title={t("studies.moreActions")}>
           <Button
-            size="small"
             id="menu"
             color="primary"
             sx={{ width: "auto", minWidth: 0, p: 0 }}

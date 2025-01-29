@@ -71,13 +71,7 @@ function UpgradeDialog({ study, onClose, open }: Props) {
     >
       {({ control }) => (
         <Fieldset fullFieldWidth>
-          <SelectFE
-            name="version"
-            label="Version"
-            variant="filled"
-            options={versionOptions}
-            control={control}
-          />
+          <SelectFE name="version" label="Version" options={versionOptions} control={control} />
         </Fieldset>
       )}
     </FormDialog>

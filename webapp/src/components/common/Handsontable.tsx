@@ -17,7 +17,7 @@ import HotTable, { type HotTableProps } from "@handsontable/react";
 import { styled } from "@mui/material";
 import { forwardRef } from "react";
 import * as RA from "ramda-adjunct";
-import { SECONDARY_MAIN_COLOR } from "../../theme";
+import { SECONDARY_MAIN_COLOR } from "../App/theme";
 import "handsontable/dist/handsontable.min.css";
 
 // Register Handsontable's modules

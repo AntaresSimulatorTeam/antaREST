@@ -127,11 +127,7 @@ function ScenarioPlaylistDialog(props: Props) {
         response={res}
         ifFulfilled={(defaultValues) => (
           <>
-            <ButtonGroup
-              size="small"
-              disabled={isSubmitting}
-              sx={{ justifyContent: "flex-end", mb: 1 }}
-            >
+            <ButtonGroup disabled={isSubmitting} sx={{ justifyContent: "flex-end", mb: 1 }}>
               <Button color="secondary" onClick={handleUpdateStatus(R.T)}>
                 {t("study.configuration.general.mcScenarioPlaylist.action.enableAll")}
               </Button>

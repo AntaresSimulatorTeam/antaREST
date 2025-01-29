@@ -103,7 +103,6 @@ export default function AddConstraintTermForm({ options, constraintTerms }: Prop
       ) : (
         <Button
           variant="outlined"
-          size="small"
           color="secondary"
           startIcon={<AddCircleOutlineRoundedIcon />}
           sx={{ ml: 3.5 }}

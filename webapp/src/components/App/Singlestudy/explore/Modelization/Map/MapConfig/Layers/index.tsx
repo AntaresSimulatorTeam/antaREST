@@ -115,7 +115,6 @@ function Layers() {
         <Button
           color="primary"
           variant="outlined"
-          size="small"
           startIcon={<AddIcon />}
           onClick={() => setCreateLayerDialogOpen(true)}
           sx={{ mr: 1 }}
@@ -125,7 +124,6 @@ function Layers() {
         <Button
           color="primary"
           variant="outlined"
-          size="small"
           startIcon={<EditIcon />}
           onClick={() => setUpdateLayerDialogOpen(true)}
         >
