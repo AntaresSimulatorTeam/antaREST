@@ -41,7 +41,7 @@ function Tree(props: Props) {
   ////////////////////////////////////////////////////////////////
 
   // `SimpleTreeView` must be controlled because selected item can be changed manually
-  // by `Folder` component, or by the `path` URL parameter at view mount.
+  // by `Index` component, or by the `path` URL parameter at view mount.
   // The use of `selectedItems` and `expandedItems` make the component controlled.
 
   return (

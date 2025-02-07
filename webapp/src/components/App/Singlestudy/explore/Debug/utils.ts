@@ -47,7 +47,7 @@ export interface DataCompProps extends FileInfo {
   studyId: string;
   canEdit: boolean;
   setSelectedFile: (file: FileInfo) => void;
-  reloadTreeData: () => void;
+  reloadTreeData: VoidFunction;
 }
 
 interface ContentParsingOptions {
