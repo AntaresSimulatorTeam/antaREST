@@ -15,6 +15,7 @@
 import type { GridSelection, Item } from "@glideapps/glide-data-grid";
 import { useState } from "react";
 import { useUpdateEffect } from "react-use";
+import type { NonEmptyMatrix } from "../../shared/types";
 
 interface SelectionStats {
   sum: number;
@@ -25,7 +26,7 @@ interface SelectionStats {
 }
 
 interface UseSelectionStatsProps {
-  data: number[][];
+  data: NonEmptyMatrix;
   selection: GridSelection;
   gridToData: (coordinates: Item) => Item | null;
 }
@@ -35,8 +36,8 @@ export function useSelectionStats({ data, selection, gridToData }: UseSelectionS
 
   useUpdateEffect(() => {
     let sum = 0;
-    let min = Infinity;
-    let max = -Infinity;
+    let min = Number.POSITIVE_INFINITY;
+    let max = Number.NEGATIVE_INFINITY;
     let count = 0;
     const numRows = data.length;
     const numCols = data[0]?.length ?? 0;

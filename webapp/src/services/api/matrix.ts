@@ -20,7 +20,6 @@ import type {
   MatrixInfoDTO,
   MatrixDataSetUpdateDTO,
   MatrixIndex,
-  MatrixEditDTO,
 } from "../../common/types";
 import type { FileDownloadTask } from "./downloads";
 import { getConfig } from "../config";
@@ -97,25 +96,17 @@ export const deleteDataSet = async (id: string): Promise<void> => {
 };
 
 /**
- * @deprecated Use `updateMatrix` instead.
+ * Partially updates specific cells in an existing matrix.
  *
- * @param sid - The study ID.
- * @param path - The path of the matrix.
- * @param matrixEdit - The matrix edit data.
+ * This function sends a PUT request to modify only parts of the matrix.
+ * The updates provided in the MatrixUpdateDTO array are applied on top of the
+ * existing matrix data, leaving all other cells intact.
+ *
+ * @param studyId - The unique identifier of the study.
+ * @param path - The path to the matrix file.
+ * @param updates - An array of update instructions (partial modifications).
+ * @returns A Promise that resolves when the partial update has been applied.
  */
-export const editMatrix = async (
-  sid: string,
-  path: string,
-  matrixEdit: MatrixEditDTO[],
-): Promise<void> => {
-  const sanitizedPath = path.startsWith("/") ? path.substring(1) : path;
-
-  await client.put(
-    `/v1/studies/${sid}/matrix?path=${encodeURIComponent(sanitizedPath)}`,
-    matrixEdit,
-  );
-};
-
 export const updateMatrix = async (
   studyId: string,
   path: string,
@@ -127,6 +118,29 @@ export const updateMatrix = async (
     `/v1/studies/${studyId}/matrix?path=${encodeURIComponent(sanitizedPath)}`,
     updates,
   );
+};
+
+/**
+ * Fully replaces the entire matrix with new data.
+ *
+ * Use this method when a full update of the matrix is required,
+ * rather than applying incremental (partial) changes.
+ *
+ * Note:
+ * - While this function is named `replaceMatrix`, its purpose is to perform a full update.
+ *   In contrast, `updateMatrix` applies partial modifications.
+ *
+ * @param studyId - The unique identifier of the study.
+ * @param path - The path to the matrix resource, which is sent as a query parameter.
+ * @param data - A two-dimensional array representing the complete new matrix data.
+ * @returns A Promise that resolves when the entire matrix has been replaced.
+ */
+export const replaceMatrix = async (
+  studyId: string,
+  path: string,
+  data: number[][],
+): Promise<void> => {
+  await client.post(`/v1/studies/${studyId}/raw`, data, { params: path });
 };
 
 export const getStudyMatrixIndex = async (sid: string, path?: string): Promise<MatrixIndex> => {

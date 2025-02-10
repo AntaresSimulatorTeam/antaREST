@@ -58,7 +58,7 @@ function MatrixActions({
   ////////////////////////////////////////////////////////////////
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+    <Box sx={{ display: "flex", alignItems: "flex-end", gap: 1 }}>
       <Tooltip title={t("global.undo")}>
         <span>
           <IconButton onClick={undo} disabled={!canUndo} size="small" color="primary">
@@ -84,7 +84,6 @@ function MatrixActions({
       >
         ({pendingUpdatesCount})
       </LoadingButton>
-      <Divider sx={{ mx: 2 }} orientation="vertical" flexItem />
       <SplitButton
         options={[t("global.import.fromFile"), t("global.import.fromDatabase")]}
         onClick={onImport}

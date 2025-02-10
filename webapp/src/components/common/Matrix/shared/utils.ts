@@ -23,6 +23,9 @@ import type {
   AggregateConfig,
   DateTimeMetadataDTO,
   FormatGridNumberOptions,
+  NonEmptyRow,
+  ResizeMatrixParams,
+  NonEmptyMatrix,
 } from "./types";
 import { parseISO, type Locale } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
@@ -381,4 +384,31 @@ export function generateResultColumns(titles: string[][]): ResultColumn[] {
     type: Column.Number,
     editable: false,
   }));
+}
+
+/**
+ * Resizes each row of the given matrix to the specified number of columns.
+ *
+ * For each row in the matrix:
+ * - If the row has fewer columns than the target count, new columns are appended with the provided fill value.
+ * - If the row has more columns than the target count, the row is truncated to the target count.
+ *
+ * @param params - The parameters for resizing the matrix.
+ * @param params.matrix - The original matrix to resize, where each row is a non-empty array.
+ * @param params.newColumnCount - The desired number of columns for each row.
+ * @param [params.fillValue=0] - The value to fill in new columns if the row needs to be extended. Defaults to 0.
+ * @returns A new matrix where every row has exactly `newColumnCount` columns.
+ */
+export function resizeMatrix({ matrix, newColumnCount, fillValue = 0 }: ResizeMatrixParams) {
+  return matrix.map((row: NonEmptyRow) => {
+    const currentColumnCount = row.length;
+
+    // Add new columns
+    if (newColumnCount > currentColumnCount) {
+      return row.concat(Array(newColumnCount - currentColumnCount).fill(fillValue));
+    }
+
+    // Otherwise remove the extra columns
+    return row.slice(0, newColumnCount);
+  });
 }

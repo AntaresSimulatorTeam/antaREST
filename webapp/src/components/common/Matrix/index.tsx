@@ -12,7 +12,7 @@
  * This file is part of the Antares project.
  */
 
-import { Divider, Skeleton } from "@mui/material";
+import { Box, Divider, Skeleton } from "@mui/material";
 import MatrixGrid from "./components/MatrixGrid";
 import { useMatrix } from "./hooks/useMatrix";
 import { useState } from "react";
@@ -23,9 +23,10 @@ import { MatrixContainer, MatrixHeader, MatrixTitle } from "./styles";
 import MatrixActions from "./components/MatrixActions";
 import EmptyView from "../page/EmptyView";
 import type { fetchMatrixFn } from "../../App/Singlestudy/explore/Modelization/Areas/Hydro/utils";
-import type { AggregateConfig } from "./shared/types";
+import { isNonEmptyMatrix, type AggregateConfig } from "./shared/types";
 import GridOffIcon from "@mui/icons-material/GridOff";
 import MatrixUpload from "@/components/common/Matrix/components/MatrixUpload";
+import MatrixResize from "./components/MatrixResize";
 
 interface MatrixProps {
   url: string;
@@ -110,27 +111,30 @@ function Matrix({
     <MatrixContainer>
       <MatrixHeader>
         <MatrixTitle>{t(title)}</MatrixTitle>
-        <MatrixActions
-          onImport={(_, index) => {
-            setUploadType(index === 0 ? "file" : "database");
-          }}
-          onSave={handleSaveUpdates}
-          studyId={study.id}
-          path={url}
-          disabled={data.length === 0}
-          pendingUpdatesCount={pendingUpdatesCount}
-          isSubmitting={isSubmitting}
-          undo={undo}
-          redo={redo}
-          canUndo={canUndo}
-          canRedo={canRedo}
-          canImport={canImport}
-        />
+        <Box sx={{ display: "flex", gap: 1 }}>
+          {isNonEmptyMatrix(data) && (
+            <MatrixResizer studyId={study.id} path={url} data={data} onMatrixUpdated={reload} />
+          )}
+          <MatrixActions
+            onImport={(_, index) => {
+              setUploadType(index === 0 ? "file" : "database");
+            }}
+            onSave={handleSaveUpdates}
+            studyId={study.id}
+            path={url}
+            disabled={data.length === 0}
+            pendingUpdatesCount={pendingUpdatesCount}
+            isSubmitting={isSubmitting}
+            undo={undo}
+            redo={redo}
+            canUndo={canUndo}
+            canRedo={canRedo}
+            canImport={canImport}
+          />
+        </Box>
       </MatrixHeader>
       <Divider sx={{ width: 1, mt: 1, mb: 2 }} />
-      {!data[0]?.length ? (
-        <EmptyView title={t("matrix.message.matrixEmpty")} icon={GridOffIcon} />
-      ) : (
+      {isNonEmptyMatrix(data) ? (
         <MatrixGrid
           data={data}
           aggregates={aggregates}
@@ -143,6 +147,8 @@ function Matrix({
           readOnly={isSubmitting || readOnly}
           showPercent={showPercent}
         />
+      ) : (
+        <EmptyView title={t("matrix.message.matrixEmpty")} icon={GridOffIcon} />
       )}
       {uploadType === "file" && (
         <MatrixUpload

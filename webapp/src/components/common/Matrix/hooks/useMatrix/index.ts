@@ -229,11 +229,11 @@ export function useMatrix(
     ],
   );
 
-  const handleCellEdit = function (update: GridUpdate) {
+  const handleCellEdit = (update: GridUpdate) => {
     applyUpdates([update]);
   };
 
-  const handleMultipleCellsEdit = function (updates: GridUpdate[]) {
+  const handleMultipleCellsEdit = (updates: GridUpdate[]) => {
     applyUpdates(updates);
   };
 
@@ -312,6 +312,7 @@ export function useMatrix(
     // Use the matrix index 'steps' field to determine the number of rows
     // This ensures consistent row display (8760 for hourly, 365 for daily/weekly)
     // rather than using data.length which can vary for Binding Constraints (8784/366)
+    // !Note: do not use for data manipulations as it does not represent the real matrix data
     rowCount: index?.steps,
   };
 }

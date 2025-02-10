@@ -27,6 +27,7 @@ export const MatrixContainer = styled(Box)(() => ({
 export const MatrixHeader = styled(Box)(() => ({
   width: "100%",
   display: "flex",
+  flexDirection: "row",
   flexFlow: "row wrap",
   justifyContent: "space-between",
   alignItems: "flex-end",

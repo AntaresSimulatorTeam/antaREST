@@ -24,13 +24,18 @@ import { useGridCellContent } from "../../hooks/useGridCellContent";
 import { useMemo, useState } from "react";
 import DataGrid from "@/components/common/DataGrid";
 import { useColumnMapping } from "../../hooks/useColumnMapping";
-import type { EnhancedGridColumn, MatrixAggregates, GridUpdate } from "../../shared/types";
+import type {
+  EnhancedGridColumn,
+  MatrixAggregates,
+  GridUpdate,
+  NonEmptyMatrix,
+} from "../../shared/types";
 import { darkTheme, readOnlyDarkTheme } from "../../styles";
 import MatrixStats from "../MatrixStats";
 import { useSelectionStats } from "../../hooks/useSelectionStats";
 
 export interface MatrixGridProps {
-  data: number[][];
+  data: NonEmptyMatrix;
   rows: number;
   columns: readonly EnhancedGridColumn[];
   dateTime?: string[];

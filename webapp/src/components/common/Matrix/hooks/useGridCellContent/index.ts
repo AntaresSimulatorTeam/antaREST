@@ -14,10 +14,15 @@
 
 import { useCallback, useMemo } from "react";
 import { GridCellKind, type GridCell, type Item } from "@glideapps/glide-data-grid";
-import type { EnhancedGridColumn, ColumnType, MatrixAggregates } from "../../shared/types";
+import type {
+  EnhancedGridColumn,
+  ColumnType,
+  MatrixAggregates,
+  NonEmptyMatrix,
+} from "../../shared/types";
 import { formatGridNumber } from "../../shared/utils";
 import { Column } from "../../shared/constants";
-import { type CellContentGenerator } from "./types";
+import type { CellContentGenerator } from "./types";
 
 /**
  * Map of cell content generators for each column type.
@@ -95,7 +100,7 @@ const cellContentGenerators: Record<ColumnType, CellContentGenerator> = {
  * @returns A function that accepts a grid item and returns the configured grid cell content.
  */
 export function useGridCellContent(
-  data: number[][],
+  data: NonEmptyMatrix,
   columns: readonly EnhancedGridColumn[],
   gridToData: (cell: Item) => Item | null,
   dateTime?: string[],
