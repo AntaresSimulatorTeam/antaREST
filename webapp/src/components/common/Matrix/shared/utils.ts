@@ -58,7 +58,7 @@ export function formatGridNumber({ value, maxDecimals = 0 }: FormatGridNumberOpt
 
   const numValue = Number(value);
 
-  if (isNaN(numValue)) {
+  if (Number.isNaN(numValue)) {
     return "";
   }
 
@@ -93,7 +93,7 @@ export function formatGridNumber({ value, maxDecimals = 0 }: FormatGridNumberOpt
  */
 export function getLocale(): Locale {
   const lang = getCurrentLanguage();
-  return lang && lang.startsWith("fr") ? fr : enUS;
+  return lang?.startsWith("fr") ? fr : enUS;
 }
 
 /**

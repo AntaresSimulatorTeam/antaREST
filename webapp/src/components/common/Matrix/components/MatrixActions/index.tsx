@@ -12,7 +12,7 @@
  * This file is part of the Antares project.
  */
 
-import { Box, Divider, IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton, Tooltip } from "@mui/material";
 import SplitButton, { type SplitButtonProps } from "@/components/common/buttons/SplitButton";
 import DownloadMatrixButton from "@/components/common/buttons/DownloadMatrixButton";
 import UndoIcon from "@mui/icons-material/Undo";
