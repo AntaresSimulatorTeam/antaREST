@@ -13,7 +13,7 @@
 import json
 import uuid
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 from zipfile import ZipFile
 
 import pytest
@@ -100,11 +100,10 @@ def test_area_crud(empty_study: FileStudy, matrix_service: SimpleMatrixService):
     link_manager = LinkManager(storage_service=storage_service)
 
     # Check `AreaManager` behaviour with a RAW study
-    study_id = str(uuid.uuid4())
     # noinspection PyArgumentList
     study_version = empty_study.config.version
     study = RawStudy(
-        id=study_id,
+        id=empty_study.config.study_id,
         path=str(empty_study.config.study_path),
         additional_data=StudyAdditionalData(),
         version="820",
@@ -199,10 +198,7 @@ def test_area_crud(empty_study: FileStudy, matrix_service: SimpleMatrixService):
     area_manager.create_area(study, AreaCreationDTO(name="test2", type=AreaType.AREA))
     link_manager.create_link(
         study,
-        LinkDTO(
-            area1="test",
-            area2="test2",
-        ),
+        LinkDTO(area1="test", area2="test2", asset_type=AssetType.DC, unit_count=4),
     )
     variant_study_service.append_commands.assert_called_with(
         variant_id,
@@ -219,7 +215,7 @@ def test_area_crud(empty_study: FileStudy, matrix_service: SimpleMatrixService):
                         "loop_flow": False,
                         "use_phase_shifter": False,
                         "transmission_capacities": TransmissionCapacity.ENABLED,
-                        "asset_type": AssetType.AC,
+                        "asset_type": AssetType.DC,
                         "display_comments": True,
                         "comments": "",
                         "colorr": 112,
@@ -229,6 +225,13 @@ def test_area_crud(empty_study: FileStudy, matrix_service: SimpleMatrixService):
                         "link_style": LinkStyle.PLAIN,
                         "filter_synthesis": "hourly, daily, weekly, monthly, annual",
                         "filter_year_by_year": "hourly, daily, weekly, monthly, annual",
+                        "force_no_generation": True,
+                        "law_forced": "uniform",
+                        "law_planned": "uniform",
+                        "nominal_capacity": 0.0,
+                        "unit_count": 4,
+                        "volatility_forced": 0.0,
+                        "volatility_planned": 0.0,
                     },
                 },
                 study_version=study_version,
@@ -268,6 +271,13 @@ def test_area_crud(empty_study: FileStudy, matrix_service: SimpleMatrixService):
                         "colorb": 112,
                         "link_width": 1.0,
                         "link_style": LinkStyle.PLAIN,
+                        "force_no_generation": True,
+                        "law_forced": "uniform",
+                        "law_planned": "uniform",
+                        "nominal_capacity": 0.0,
+                        "unit_count": 1,
+                        "volatility_forced": 0.0,
+                        "volatility_planned": 0.0,
                     },
                 },
                 study_version=study_version,
@@ -408,7 +418,7 @@ def test_get_all_area():
         },
     ]
     areas = area_manager.get_all_areas(study, AreaType.AREA)
-    assert expected_areas == [area.model_dump() for area in areas]
+    assert [area.model_dump() for area in areas] == expected_areas
 
     expected_clusters = [
         {
@@ -510,7 +520,7 @@ def test_get_all_area():
         },
     ]
     links = link_manager.get_all_links(study)
-    assert [
+    assert [link.model_dump(mode="json") for link in links] == [
         {
             "area1": "a1",
             "area2": "a2",
@@ -528,6 +538,13 @@ def test_get_all_area():
             "loop_flow": False,
             "transmission_capacities": "enabled",
             "use_phase_shifter": False,
+            "force_no_generation": True,
+            "law_forced": "uniform",
+            "law_planned": "uniform",
+            "nominal_capacity": 0.0,
+            "unit_count": 1,
+            "volatility_forced": 0.0,
+            "volatility_planned": 0.0,
         },
         {
             "area1": "a1",
@@ -546,6 +563,13 @@ def test_get_all_area():
             "loop_flow": False,
             "transmission_capacities": "enabled",
             "use_phase_shifter": False,
+            "force_no_generation": True,
+            "law_forced": "uniform",
+            "law_planned": "uniform",
+            "nominal_capacity": 0.0,
+            "unit_count": 1,
+            "volatility_forced": 0.0,
+            "volatility_planned": 0.0,
         },
         {
             "area1": "a2",
@@ -564,8 +588,15 @@ def test_get_all_area():
             "loop_flow": False,
             "transmission_capacities": "enabled",
             "use_phase_shifter": False,
+            "force_no_generation": True,
+            "law_forced": "uniform",
+            "law_planned": "uniform",
+            "nominal_capacity": 0.0,
+            "unit_count": 1,
+            "volatility_forced": 0.0,
+            "volatility_planned": 0.0,
         },
-    ] == [link.model_dump(mode="json") for link in links]
+    ]
 
 
 def test_update_area():
@@ -647,8 +678,8 @@ def test_update_clusters():
         {
             "a": {
                 "name": "A",
-                "unitcount": 1,
-                "nominalcapacity": 500,
+                "unit_count": 1,
+                "nominal_capacity": 500,
                 "min-stable-power": 200,
             }
         }
