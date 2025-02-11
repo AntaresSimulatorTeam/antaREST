@@ -20,6 +20,9 @@ import type { NonEmptyMatrix } from "../../shared/types";
 import { useUpdateEffect } from "react-use";
 import Transform from "@mui/icons-material/Transform";
 import { resizeMatrix } from "../../shared/utils";
+import { useTranslation } from "react-i18next";
+import useEnqueueErrorSnackbar from "@/hooks/useEnqueueErrorSnackbar";
+import { toError } from "@/utils/fnUtils";
 
 interface MatrixResizerProps {
   studyId: string;
@@ -29,6 +32,8 @@ interface MatrixResizerProps {
 }
 
 function MatrixResizer({ studyId, path, data, onMatrixUpdated }: MatrixResizerProps) {
+  const { t } = useTranslation();
+  const errorSnackBar = useEnqueueErrorSnackbar();
   // Use the first row's length as the initial column count.
   const initialColumnCount = data[0].length;
   const [columnCount, setColumnCount] = useState(initialColumnCount);
@@ -50,19 +55,22 @@ function MatrixResizer({ studyId, path, data, onMatrixUpdated }: MatrixResizerPr
       await replaceMatrix(studyId, path, updatedMatrix);
       onMatrixUpdated();
     } catch (error) {
-      console.error("Matrix resize failed:", error);
-      // TODO add snackbar
+      errorSnackBar(t("matrix.error.matrixUpdate"), toError(error));
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  ////////////////////////////////////////////////////////////////
+  // JSX
+  ////////////////////////////////////////////////////////////////
 
   return (
     <Box sx={{ display: "flex", alignItems: "flex-end", gap: 1 }}>
       <TextField
         type="number"
         size="small"
-        label="Columns" // TODO: add key
+        label={t("matrix.columns")}
         value={columnCount}
         onChange={(e) => setColumnCount(Number(e.target.value))}
         sx={{ m: 0, mt: 1, width: 100 }}
@@ -81,7 +89,7 @@ function MatrixResizer({ studyId, path, data, onMatrixUpdated }: MatrixResizerPr
         size="small"
         disabled={columnCount === initialColumnCount}
       >
-        Resize
+        {t("matrix.resize")}
       </LoadingButton>
     </Box>
   );
