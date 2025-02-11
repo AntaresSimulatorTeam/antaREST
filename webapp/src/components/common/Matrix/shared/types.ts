@@ -52,7 +52,7 @@ export interface CustomColumnOptions {
 }
 
 export interface DataColumnsConfig {
-  timeSeriesColumns: boolean;
+  isTimeSeries: boolean;
   width?: number;
   count: number;
   customColumns?: string[] | readonly string[];

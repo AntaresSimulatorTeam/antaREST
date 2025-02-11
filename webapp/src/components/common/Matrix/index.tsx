@@ -26,14 +26,14 @@ import type { fetchMatrixFn } from "../../App/Singlestudy/explore/Modelization/A
 import { isNonEmptyMatrix, type AggregateConfig } from "./shared/types";
 import GridOffIcon from "@mui/icons-material/GridOff";
 import MatrixUpload from "@/components/common/Matrix/components/MatrixUpload";
-import MatrixResize from "./components/MatrixResize";
+import MatrixResizer from "./components/MatrixResizer";
 
 interface MatrixProps {
   url: string;
   title?: string;
   customRowHeaders?: string[];
   dateTimeColumn?: boolean;
-  timeSeriesColumns?: boolean;
+  isTimeSeries?: boolean;
   aggregateColumns?: AggregateConfig;
   rowHeaders?: boolean;
   showPercent?: boolean;
@@ -49,7 +49,7 @@ function Matrix({
   title = "global.timeSeries",
   customRowHeaders = [],
   dateTimeColumn = true,
-  timeSeriesColumns = true,
+  isTimeSeries = true,
   aggregateColumns = false,
   rowHeaders = customRowHeaders.length > 0,
   showPercent = false,
@@ -87,7 +87,7 @@ function Matrix({
     study.id,
     url,
     dateTimeColumn,
-    timeSeriesColumns,
+    isTimeSeries,
     rowHeaders,
     aggregateColumns,
     customColumns,
@@ -112,7 +112,7 @@ function Matrix({
       <MatrixHeader>
         <MatrixTitle>{t(title)}</MatrixTitle>
         <Box sx={{ display: "flex", gap: 1 }}>
-          {isNonEmptyMatrix(data) && (
+          {isNonEmptyMatrix(data) && isTimeSeries && (
             <MatrixResizer studyId={study.id} path={url} data={data} onMatrixUpdated={reload} />
           )}
           <MatrixActions

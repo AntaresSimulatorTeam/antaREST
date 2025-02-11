@@ -62,7 +62,7 @@ function DigestDialog({ studyId, outputId, ...dialogProps }: DigestDialogProps) 
             <MatrixGridSynthesis
               data={matrix.data}
               columns={generateDataColumns({
-                timeSeriesColumns: false,
+                isTimeSeries: false,
                 count: matrix.columns.length,
                 customColumns: matrix.columns,
                 width: 100,

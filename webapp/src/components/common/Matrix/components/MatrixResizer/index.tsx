@@ -62,7 +62,7 @@ function MatrixResizer({ studyId, path, data, onMatrixUpdated }: MatrixResizerPr
       <TextField
         type="number"
         size="small"
-        label="Columns"
+        label="Columns" // TODO: add key
         value={columnCount}
         onChange={(e) => setColumnCount(Number(e.target.value))}
         sx={{ m: 0, mt: 1, width: 100 }}

@@ -25,7 +25,6 @@ import type {
   FormatGridNumberOptions,
   NonEmptyRow,
   ResizeMatrixParams,
-  NonEmptyMatrix,
 } from "./types";
 import { parseISO, type Locale } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
@@ -188,7 +187,7 @@ export function generateCustomColumns({
  * Generates an array of data columns for a matrix grid.
  *
  * @param config - Configuration object for generating columns
- * @param config.timeSeriesColumns - A boolean indicating whether to enable time series columns
+ * @param config.isTimeSeries - A boolean indicating whether to enable time series columns
  * @param config.count - The number of columns to generate
  * @param config.customColumns - An optional array of custom column titles
  * @param config.width - The width of each column
@@ -196,7 +195,7 @@ export function generateCustomColumns({
  * @returns An array of EnhancedGridColumn objects representing the generated data columns
  */
 export function generateDataColumns({
-  timeSeriesColumns,
+  isTimeSeries,
   width,
   count,
   customColumns,
@@ -210,7 +209,7 @@ export function generateDataColumns({
   }
 
   // Else, generate time series columns if enabled
-  if (timeSeriesColumns) {
+  if (isTimeSeries) {
     return generateTimeSeriesColumns({
       count,
     });
@@ -322,7 +321,6 @@ export function calculateMatrixAggregates(
  * // Both columns will be grouped under "OV. COST (Euro)"
  * ```
  */
-
 export function groupResultColumns(
   columns: Array<EnhancedGridColumn | ResultColumn>,
 ): EnhancedGridColumn[] {

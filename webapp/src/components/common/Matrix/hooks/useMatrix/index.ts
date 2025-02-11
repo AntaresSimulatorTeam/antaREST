@@ -53,7 +53,7 @@ export function useMatrix(
   studyId: string,
   url: string,
   dateTimeColumn: boolean,
-  timeSeriesColumns: boolean,
+  isTimeSeries: boolean,
   enableRowHeaders?: boolean,
   aggregatesConfig?: AggregateConfig,
   customColumns?: string[] | readonly string[],
@@ -158,7 +158,7 @@ export function useMatrix(
     }
 
     const dataColumns = generateDataColumns({
-      timeSeriesColumns,
+      isTimeSeries,
       count: columnCount,
       customColumns,
       width: colWidth,
@@ -180,7 +180,7 @@ export function useMatrix(
     currentState.data,
     dateTimeColumn,
     enableRowHeaders,
-    timeSeriesColumns,
+    isTimeSeries,
     columnCount,
     customColumns,
     colWidth,

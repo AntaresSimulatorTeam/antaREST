@@ -140,7 +140,7 @@ export const replaceMatrix = async (
   path: string,
   data: number[][],
 ): Promise<void> => {
-  await client.post(`/v1/studies/${studyId}/raw`, data, { params: path });
+  await client.post(`/v1/studies/${studyId}/raw`, data, { params: { path } });
 };
 
 export const getStudyMatrixIndex = async (sid: string, path?: string): Promise<MatrixIndex> => {
