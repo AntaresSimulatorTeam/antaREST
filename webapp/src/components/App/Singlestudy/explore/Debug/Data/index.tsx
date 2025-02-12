@@ -15,7 +15,7 @@
 import Text from "./Text";
 import Unsupported from "./Unsupported";
 import Matrix from "./Matrix";
-import Folder from "./Folder";
+import Index from "./Folder";
 import {
   canEditFile,
   getEffectiveFileType,
@@ -38,7 +38,7 @@ const componentByFileType: Record<FileType, React.ComponentType<DataCompProps>> 
   json: Json,
   text: Text,
   unsupported: Unsupported,
-  folder: Folder,
+  folder: Index,
 } as const;
 
 function Data({ study, setSelectedFile, reloadTreeData, ...fileInfo }: Props) {
