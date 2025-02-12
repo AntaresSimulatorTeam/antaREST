@@ -91,6 +91,7 @@ from antarest.study.business.correlation_management import CorrelationManager
 from antarest.study.business.district_manager import DistrictManager
 from antarest.study.business.general_management import GeneralManager
 from antarest.study.business.link_management import LinkManager
+from antarest.study.business.load_management import LoadManager
 from antarest.study.business.matrix_management import MatrixManager, MatrixManagerError
 from antarest.study.business.model.area_model import AreaCreationDTO, AreaInfoDTO, AreaType, UpdateAreaUi
 from antarest.study.business.model.link_model import LinkBaseDTO, LinkDTO
@@ -418,6 +419,7 @@ class StudyService:
         self.adequacy_patch_manager = AdequacyPatchManager(self.storage_service)
         self.advanced_parameters_manager = AdvancedParamsManager(self.storage_service)
         self.hydro_manager = HydroManager(self.storage_service)
+        self.load_manager = LoadManager(self.storage_service)
         self.allocation_manager = AllocationManager(self.storage_service)
         self.properties_manager = PropertiesManager(self.storage_service)
         self.renewable_manager = RenewableManager(self.storage_service)

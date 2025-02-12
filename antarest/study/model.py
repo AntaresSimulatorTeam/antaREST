@@ -15,8 +15,10 @@ import enum
 import secrets
 import uuid
 from datetime import datetime, timedelta
-from pathlib import Path, PurePath, PurePosixPath
+from pathlib import PurePosixPath
 from typing import TYPE_CHECKING, Annotated, Any, Dict, List, Mapping, Optional, Tuple, cast
+from enum import StrEnum
+from pathlib import Path, PurePath
 
 from antares.study.version import StudyVersion
 from pydantic import BeforeValidator, ConfigDict, Field, PlainSerializer, computed_field, field_validator
@@ -573,6 +575,11 @@ class ExportFormat(enum.StrEnum):
             ExportFormat.JSON: ".json",
         }
         return mapping[self]
+
+
+class MatrixFormat(StrEnum):
+    JSON = "json"
+    ARROW = "arrow"
 
 
 class StudyDownloadDTO(AntaresBaseModel):
