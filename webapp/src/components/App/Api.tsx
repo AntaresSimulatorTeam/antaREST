@@ -29,9 +29,7 @@ function Api() {
       overflow="auto"
       sx={{ backgroundColor: "#eee" }}
     >
-      <Box sx={{ zIndex: 999 }}>
-        <SwaggerUI url={`${getConfig().baseUrl}${getConfig().restEndpoint}/openapi.json`} />
-      </Box>
+      <SwaggerUI url={`${getConfig().baseUrl}${getConfig().restEndpoint}/openapi.json`} />
     </Box>
   );
 }

@@ -148,7 +148,6 @@ function ConstraintTermItem({ options, term, constraintTerms, saveValue, deleteT
           <TextField
             label={t("study.modelization.bindingConst.weight")}
             variant="outlined"
-            size="small"
             type="number"
             value={weight}
             onChange={handleWeightChange}
@@ -184,7 +183,6 @@ function ConstraintTermItem({ options, term, constraintTerms, saveValue, deleteT
                   <TextField
                     label={t("study.modelization.bindingConst.offset")}
                     variant="outlined"
-                    size="small"
                     type="number"
                     value={offset}
                     onChange={handleOffsetChange}
@@ -198,7 +196,6 @@ function ConstraintTermItem({ options, term, constraintTerms, saveValue, deleteT
           <Button
             variant="outlined"
             color="secondary"
-            size="small"
             startIcon={<AddCircleOutlineRoundedIcon />}
             onClick={handleOffsetAdd}
             sx={{ ml: 3.5 }}
@@ -212,7 +209,6 @@ function ConstraintTermItem({ options, term, constraintTerms, saveValue, deleteT
         <Button
           variant="outlined"
           color="error"
-          size="small"
           startIcon={<DeleteRoundedIcon />}
           onClick={deleteTerm}
         >

@@ -17,7 +17,7 @@ import mapbackground from "../../../../../../assets/img/mapbackground.png";
 import { getTextColor, type RGB } from "./utils";
 
 ////////////////////////////////////////////////////////////////
-// Map(index.tsx)
+// Map(ThermalForm.tsx)
 ////////////////////////////////////////////////////////////////
 
 export const MapContainer = styled(Box)(() => ({

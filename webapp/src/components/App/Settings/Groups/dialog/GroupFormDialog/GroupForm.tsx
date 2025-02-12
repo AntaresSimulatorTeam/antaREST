@@ -145,7 +145,7 @@ function GroupForm(props: UseFormReturnPlus) {
         {filteredAndSortedUsers.length > 0 && (
           <>
             <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-              <FormControl sx={{ mr: 2, flex: 1 }} size="small">
+              <FormControl sx={{ mr: 2, flex: 1 }}>
                 <InputLabel id={userLabelId}>{t("global.user")}</InputLabel>
                 <Select
                   labelId={userLabelId}
@@ -162,7 +162,6 @@ function GroupForm(props: UseFormReturnPlus) {
               </FormControl>
               <Button
                 variant="contained"
-                size="small"
                 disabled={!allowToAddPermission}
                 onClick={() => {
                   append({ user: selectedUser, type: RoleType.READER });

@@ -18,7 +18,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Divider from "@mui/material/Divider";
 import { Button, Drawer, List, ListItem, Typography } from "@mui/material";
 import { useEffect, useRef } from "react";
-import { STUDIES_FILTER_WIDTH } from "../../../theme";
+import { STUDIES_FILTER_WIDTH } from "../theme";
 import useAppSelector from "../../../redux/hooks/useAppSelector";
 import { getGroups, getStudyFilters, getStudyVersions, getUsers } from "../../../redux/selectors";
 import useAppDispatch from "../../../redux/hooks/useAppDispatch";
@@ -102,7 +102,6 @@ function FilterDrawer(props: Props) {
           flexDirection="column"
           flexWrap="nowrap"
           boxSizing="border-box"
-          color="white"
         >
           <Typography sx={{ color: "grey.500", fontSize: "0.9em", mb: 2 }}>
             {t("global.filter").toUpperCase()}

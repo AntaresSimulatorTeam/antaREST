@@ -153,7 +153,7 @@ function TokenForm(props: Props) {
           <>
             {!readOnly && (
               <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                <FormControl sx={{ mr: 2, flex: 1 }} size="small">
+                <FormControl sx={{ mr: 2, flex: 1 }}>
                   <InputLabel id={groupLabelId}>{t("global.group")}</InputLabel>
                   <Select
                     labelId={groupLabelId}
@@ -170,7 +170,6 @@ function TokenForm(props: Props) {
                 </FormControl>
                 <Button
                   variant="contained"
-                  size="small"
                   disabled={!allowToAddPermission}
                   onClick={() => {
                     append({ group: selectedGroup, type: RoleType.READER });

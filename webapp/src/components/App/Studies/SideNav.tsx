@@ -15,7 +15,7 @@
 import { useNavigate } from "react-router";
 import { Box, Typography, List, ListItem, ListItemText } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { STUDIES_SIDE_NAV_WIDTH } from "../../../theme";
+import { STUDIES_SIDE_NAV_WIDTH } from "../theme";
 import StudyTree from "@/components/App/Studies/StudyTree";
 import useAppSelector from "../../../redux/hooks/useAppSelector";
 import { getFavoriteStudies } from "../../../redux/selectors";
@@ -37,7 +37,7 @@ function SideNav() {
       p={2}
       sx={{ overflowX: "hidden", overflowY: "auto" }}
     >
-      <Typography sx={{ color: "grey.400" }}>{t("studies.favorites")}</Typography>
+      <Typography>{t("studies.favorites")}</Typography>
       <List sx={{ width: "100%" }}>
         {favorites.map((fav) => (
           <ListItem
@@ -49,16 +49,13 @@ function SideNav() {
               py: 0,
               px: 1,
               cursor: "pointer",
-              "&:hover": {
-                bgcolor: "primary.outlinedHoverBackground",
-              },
             }}
           >
             <ListItemText primary={fav.name} />
           </ListItem>
         ))}
       </List>
-      <Typography sx={{ color: "grey.400" }}>Exploration</Typography>
+      <Typography>Exploration</Typography>
       <StudyTree />
     </Box>
   );

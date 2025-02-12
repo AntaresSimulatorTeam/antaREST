@@ -30,6 +30,7 @@ function ViewWrapper({ children }: ViewWrapperProps) {
           pt: 0,
         },
         overflow: "auto",
+        position: "relative",
       }}
     >
       {children}

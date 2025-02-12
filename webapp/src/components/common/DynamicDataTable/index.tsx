@@ -131,7 +131,6 @@ function DynamicDataTable({
         <Button
           startIcon={<CompareArrowsIcon />}
           variant="outlined"
-          size="small"
           sx={{ mt: 3, mr: 3 }}
           onClick={() => null}
         >
@@ -140,7 +139,6 @@ function DynamicDataTable({
         <Button
           startIcon={<AddIcon />}
           variant="outlined"
-          size="small"
           sx={{ mt: 3, mr: 3 }}
           onClick={() => setOpenAddItemDialog(true)}
         >

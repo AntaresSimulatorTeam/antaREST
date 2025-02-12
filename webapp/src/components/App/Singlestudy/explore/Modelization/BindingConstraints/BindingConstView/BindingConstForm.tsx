@@ -116,7 +116,6 @@ function BindingConstForm({ study, options, constraintId }: Props) {
           >
             <Button
               variant="contained"
-              size="small"
               color="primary"
               startIcon={<AddCircleOutlineRoundedIcon />}
               onClick={() => setOpenConstraintTermDialog(true)}

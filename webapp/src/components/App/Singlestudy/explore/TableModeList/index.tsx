@@ -133,17 +133,11 @@ function TableModeList() {
               columns={selectedTemplate.columns}
               extraActions={
                 <>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<EditIcon />}
-                    onClick={handleEditClick}
-                  >
+                  <Button variant="outlined" startIcon={<EditIcon />} onClick={handleEditClick}>
                     {t("global.edit")}
                   </Button>
                   <Button
                     variant="outlined"
-                    size="small"
                     color="error"
                     startIcon={<DeleteIcon />}
                     onClick={handleDeleteClick}

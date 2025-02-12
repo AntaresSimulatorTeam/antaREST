@@ -117,7 +117,6 @@ function UploadFileButton(props: UploadFileButtonProps) {
       <input {...getInputProps()} />
       <LoadingButton
         variant="outlined"
-        size="small"
         onClick={open}
         startIcon={<FileDownloadIcon />}
         loadingPosition="start"

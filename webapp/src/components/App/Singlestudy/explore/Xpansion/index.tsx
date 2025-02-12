@@ -112,7 +112,6 @@ function Xpansion() {
             <Button
               color="primary"
               variant="contained"
-              size="small"
               startIcon={<AddIcon />}
               onClick={createXpansion}
             >

@@ -26,6 +26,7 @@ import { useCallback, useState } from "react";
 import { voidFn } from "@/utils/fnUtils";
 import { darkTheme } from "./Matrix/styles";
 import { useUpdateEffect } from "react-use";
+import { useTheme } from "@mui/material";
 
 interface StringRowMarkerOptions {
   kind: "string" | "clickable-string";
@@ -79,6 +80,8 @@ function DataGrid({
     rows: CompactSelection.empty(),
     columns: CompactSelection.empty(),
   });
+
+  const theme = useTheme();
 
   useUpdateEffect(() => {
     setColumns(initColumns());
@@ -136,7 +139,7 @@ function DataGrid({
             allowOverlay: false,
             readonly: true,
             themeOverride: {
-              bgCell: darkTheme.bgHeader,
+              bgCell: theme.palette.mode === "dark" ? darkTheme.bgHeader : "#f7f7f8",
             },
           } satisfies GridCell;
         },

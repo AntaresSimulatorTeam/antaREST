@@ -55,7 +55,6 @@ function PropertiesView({
           <Button
             color="primary"
             variant="contained"
-            size="small"
             startIcon={<AddIcon />}
             onClick={onAdd}
             sx={{

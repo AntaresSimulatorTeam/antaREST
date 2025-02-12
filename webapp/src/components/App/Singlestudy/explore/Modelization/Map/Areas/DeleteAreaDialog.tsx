@@ -86,7 +86,6 @@ function DeleteAreaDialog(props: Props) {
       >
         <Button
           color="primary"
-          size="small"
           onClick={() => {
             dispatch(setCurrentArea(""));
             dispatch(setCurrentLink(""));

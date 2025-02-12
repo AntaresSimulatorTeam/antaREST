@@ -16,7 +16,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
@@ -36,7 +35,6 @@ import { keyframes, styled, Tooltip, useTheme, type SvgIconProps } from "@mui/ma
 import { useMount } from "react-use";
 import logo from "../../../assets/img/logo.png";
 import NotificationBadge from "../../App/Tasks/NotificationBadge";
-import topRightBackground from "../../../assets/img/top-right-background.png";
 import { setMenuCollapse } from "../../../redux/ducks/ui";
 import {
   NavDrawer,
@@ -48,7 +46,6 @@ import {
   Root,
   TootlbarContent,
   MenuContainer,
-  LogoContainer,
 } from "./styles";
 import { getConfig } from "../../../services/config";
 import {
@@ -162,13 +159,7 @@ function MenuWrapper(props: Props) {
       return (
         <Tooltip title={tooltipTitle} placement="right-end" key={elm.id}>
           <NavListItem link>
-            <NavInternalLink
-              to={elm.link}
-              end={elm.strict}
-              style={({ isActive }) => ({
-                background: isActive ? theme.palette.primary.outlinedHoverBackground : undefined,
-              })}
-            >
+            <NavInternalLink to={elm.link} end={elm.strict}>
               <NotificationBadge>
                 <NavListItemIcon>
                   <elm.icon sx={{ color: "grey.400" }} />
@@ -191,13 +182,7 @@ function MenuWrapper(props: Props) {
               {extended && <NavListItemText primary={t(`${elm.id}`)} />}
             </NavExternalLink>
           ) : (
-            <NavInternalLink
-              to={elm.link}
-              end={elm.strict}
-              style={({ isActive }) => ({
-                background: isActive ? theme.palette.primary.outlinedHoverBackground : undefined,
-              })}
-            >
+            <NavInternalLink to={elm.link} end={elm.strict}>
               <NavListItemIcon>
                 <elm.icon sx={{ color: "grey.400" }} />
               </NavListItemIcon>
@@ -213,10 +198,6 @@ function MenuWrapper(props: Props) {
 
   return (
     <Root>
-      <CssBaseline />
-      <LogoContainer>
-        <img src={topRightBackground} alt="logo" style={{ height: "auto" }} />
-      </LogoContainer>
       <NavDrawer extended={extended} variant="permanent" anchor="left">
         <Toolbar>
           <TootlbarContent extended={extended}>

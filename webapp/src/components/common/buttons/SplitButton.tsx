@@ -22,7 +22,7 @@ import Popper from "@mui/material/Popper";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import { useRef, useState } from "react";
-import LoadingButton, { type LoadingButtonProps } from "@mui/lab/LoadingButton";
+import type { ButtonProps } from "@mui/material";
 
 interface OptionObj<Value extends string = string> {
   value: Value;
@@ -35,7 +35,7 @@ export interface SplitButtonProps<OptionValue extends string = string>
   options: Array<OptionValue | OptionObj<OptionValue>>;
   dropdownActionMode?: "change" | "trigger";
   onClick?: (optionValue: OptionValue, optionIndex: number) => void;
-  ButtonProps?: Omit<LoadingButtonProps, "onClick">;
+  ButtonProps?: Omit<ButtonProps, "onClick">;
 }
 
 export default function SplitButton<OptionValue extends string>(
@@ -46,7 +46,7 @@ export default function SplitButton<OptionValue extends string>(
     dropdownActionMode = "trigger",
     onClick,
     children,
-    ButtonProps: loadingButtonProps,
+    ButtonProps,
     disabled,
     ...buttonGroupProps
   } = props;
@@ -115,18 +115,14 @@ export default function SplitButton<OptionValue extends string>(
         disabled={disabled || formattedOptions.length === 0}
         ref={anchorRef}
       >
-        <LoadingButton
+        <Button
           variant={buttonGroupProps.variant || "outlined"} // `LoadingButton` doesn't inherit from `ButtonGroup`
-          {...loadingButtonProps}
+          {...ButtonProps}
           onClick={handleButtonClick}
         >
           {getButtonLabel(selectedIndex)}
-        </LoadingButton>
-        <Button
-          size="small"
-          onClick={handleToggle}
-          disabled={disabled || loadingButtonProps?.loading}
-        >
+        </Button>
+        <Button onClick={handleToggle} disabled={disabled || !!ButtonProps?.loading}>
           <ArrowDropDownIcon />
         </Button>
       </ButtonGroup>

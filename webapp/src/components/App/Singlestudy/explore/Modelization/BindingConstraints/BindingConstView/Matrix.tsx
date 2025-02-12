@@ -34,7 +34,7 @@ function ConstraintMatrix({ study, operator, constraintId, open, onClose }: Prop
     open,
     onClose,
     actions: (
-      <Button onClick={onClose} color="primary" variant="outlined" size="small">
+      <Button onClick={onClose} color="primary" variant="outlined">
         {t("global.close")}
       </Button>
     ),

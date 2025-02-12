@@ -44,6 +44,10 @@ function Fieldset(props: FieldsetProps) {
             ".MuiFormControl-root": {
               width: fullFieldWidth ? 1 : fieldWidth,
               m: 0,
+              // SwitchFE
+              ".MuiFormControlLabel-root": {
+                pl: 1.5,
+              },
             },
           },
           // Increase padding from the last child

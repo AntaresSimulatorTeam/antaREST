@@ -107,7 +107,6 @@ function UpdateLayerDialog(props: Props) {
           <SelectFE
             name="layerId"
             label={t("Layers")}
-            variant="filled"
             options={layersOptions}
             control={control}
             onChange={({ target: { value } }) => {
@@ -136,7 +135,6 @@ function UpdateLayerDialog(props: Props) {
           <Button
             color="error"
             variant="outlined"
-            size="small"
             startIcon={<DeleteIcon />}
             disabled={getValues("layerId") === ""}
             onClick={() => setOpenConfirmationModal(true)}

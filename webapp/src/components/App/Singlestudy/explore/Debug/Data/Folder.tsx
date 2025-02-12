@@ -154,7 +154,6 @@ function Folder(props: DataCompProps) {
                     canEditFile(study, path) && (
                       <IconButton
                         edge="end"
-                        size="small"
                         onClick={(event) => {
                           setMenuData({
                             anchorEl: event.currentTarget,

@@ -171,7 +171,7 @@ function UserForm(props: Props) {
         {filteredAndSortedGroups.length > 0 && (
           <>
             <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-              <FormControl sx={{ mr: 2, flex: 1 }} size="small">
+              <FormControl sx={{ mr: 2, flex: 1 }}>
                 <InputLabel id={groupLabelId}>{t("global.group")}</InputLabel>
                 <Select
                   labelId={groupLabelId}
@@ -188,7 +188,6 @@ function UserForm(props: Props) {
               </FormControl>
               <Button
                 variant="contained"
-                size="small"
                 disabled={!allowToAddPermission}
                 onClick={() => {
                   append({ group: selectedGroup, type: RoleType.READER });

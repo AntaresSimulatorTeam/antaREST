@@ -19,14 +19,13 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
 import { Box, styled } from "@mui/material";
-import { DRAWER_WIDTH, DRAWER_WIDTH_EXTENDED } from "../../../theme";
+import { DRAWER_WIDTH, DRAWER_WIDTH_EXTENDED } from "../../App/theme";
 
 export const Root = styled(Box)({
   display: "flex",
   width: "100vw",
   height: "100vh",
   overflow: "hidden",
-  background: "radial-gradient(ellipse at top right, #190520 0%, #190520 30%, #222333 100%)",
 });
 
 export const TootlbarContent = styled(Box, {
@@ -49,17 +48,6 @@ export const MenuContainer = styled(Box)({
   flexDirection: "column",
   boxSizing: "border-box",
   overflowY: "auto",
-});
-
-export const LogoContainer = styled(Box)({
-  position: "absolute",
-  top: "0px",
-  right: "0px",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  flexFlow: "column nowrap",
-  boxSizing: "border-box",
 });
 
 export const NavExternalLink = styled("a")({
@@ -85,9 +73,6 @@ export const NavListItem = styled(ListItem, {
   padding: 0,
   margin: theme.spacing(1, 0),
   boxSizing: "border-box",
-  "&:hover": {
-    backgroundColor: theme.palette.primary.outlinedHoverBackground,
-  },
   ...(!link && {
     display: "flex",
     flexFlow: "row nowrap",
@@ -110,7 +95,6 @@ export const NavInternalLink = styled(NavLink)({
 });
 
 export const NavListItemText = styled(ListItemText)(({ theme }) => ({
-  color: theme.palette.grey[400],
   "& span, & svg": {
     fontSize: "0.8em",
   },

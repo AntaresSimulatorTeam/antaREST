@@ -19,7 +19,7 @@ import { useState } from "react";
 interface TabsViewProps {
   items: Array<{
     label: string;
-    content?: React.ReactNode;
+    content?: () => React.ReactNode;
   }>;
   onChange?: TabListProps["onChange"];
   divider?: boolean;
@@ -60,8 +60,12 @@ function TabsView({ items, onChange, divider }: TabsViewProps) {
           </TabList>
         </Box>
         {items.map(({ content }, index) => (
-          <TabPanel key={index} value={index.toString()} sx={{ px: 0, pb: 0, overflow: "auto" }}>
-            {content}
+          <TabPanel
+            key={index}
+            value={index.toString()}
+            sx={{ px: 0, pb: 0, height: 1, overflow: "auto" }}
+          >
+            {content?.()}
           </TabPanel>
         ))}
       </TabContext>
