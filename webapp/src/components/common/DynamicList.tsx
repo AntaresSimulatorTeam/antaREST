@@ -67,6 +67,7 @@ function DynamicList<T extends { id: string }>({
       <Grid item>
         {options.length > 0 && (
           <SelectFE
+            value=""
             label={t("global.area.add")}
             options={options}
             value=""

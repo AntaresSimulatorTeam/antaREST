@@ -13,6 +13,7 @@
  */
 
 import {
+  Button,
   Divider,
   IconButton,
   List,
@@ -24,7 +25,6 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import FolderIcon from "@mui/icons-material/Folder";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -34,35 +34,45 @@ import {
   type DataCompProps,
   isFolder,
   canEditFile,
-} from "../utils";
+} from "../../utils.ts";
 import { Fragment, useState } from "react";
-import EmptyView from "../../../../../common/page/EmptyView";
+import EmptyView from "../../../../../../common/page/EmptyView.tsx";
 import { useTranslation } from "react-i18next";
-import { Filename, Menubar } from "./styles";
-import UploadFileButton from "../../../../../common/buttons/UploadFileButton";
-import ConfirmationDialog from "../../../../../common/dialogs/ConfirmationDialog";
-import useConfirm from "../../../../../../hooks/useConfirm";
-import { deleteFile } from "../../../../../../services/api/studies/raw";
-import useEnqueueErrorSnackbar from "../../../../../../hooks/useEnqueueErrorSnackbar";
-import { toError } from "../../../../../../utils/fnUtils";
+import { Filename, Menubar } from "../styles.tsx";
+import UploadFileButton from "../../../../../../common/buttons/UploadFileButton.tsx";
+import ConfirmationDialog from "../../../../../../common/dialogs/ConfirmationDialog.tsx";
+import useConfirm from "../../../../../../../hooks/useConfirm.ts";
+import { deleteFile } from "../../../../../../../services/api/studies/raw";
+import useEnqueueErrorSnackbar from "../../../../../../../hooks/useEnqueueErrorSnackbar.tsx";
+import { toError } from "../../../../../../../utils/fnUtils.ts";
 import { useOutletContext } from "react-router";
-import type { StudyMetadata } from "../../../../../../common/types";
-import { useSnackbar } from "notistack";
+import type { StudyMetadata } from "../../../../../../../common/types.ts";
+import CreateFoldersDialog from "@/components/App/Singlestudy/explore/Debug/Data/Folder/CreateFoldersDialog.tsx";
 
-function Folder(props: DataCompProps) {
-  const { filename, filePath, treeData, canEdit, setSelectedFile, reloadTreeData, studyId } = props;
+const FolderIcon = getFileIcon("folder");
 
+function Folder({
+  filename,
+  filePath,
+  treeData,
+  canEdit,
+  setSelectedFile,
+  reloadTreeData,
+  studyId,
+}: DataCompProps) {
   const { t } = useTranslation();
   const { study } = useOutletContext<{ study: StudyMetadata }>();
   const replaceAction = useConfirm();
   const deleteAction = useConfirm();
-  const { enqueueSnackbar } = useSnackbar();
   const enqueueErrorSnackbar = useEnqueueErrorSnackbar();
 
   const [menuData, setMenuData] = useState<null | {
     anchorEl: HTMLElement;
     filePath: string;
+    isFolder: boolean;
   }>(null);
+
+  const [displayNewFolderModal, setDisplayNewFolderModal] = useState(false);
 
   const treeFolder = treeData as TreeFolder;
   const fileList = Object.entries(treeFolder);
@@ -86,6 +96,10 @@ function Folder(props: DataCompProps) {
     setMenuData(null);
   };
 
+  const handleCreateFolderClick = () => {
+    setDisplayNewFolderModal(true);
+  };
+
   const handleDeleteClick = () => {
     handleMenuClose();
 
@@ -97,7 +111,6 @@ function Folder(props: DataCompProps) {
       if (confirm) {
         deleteFile({ studyId, path: menuData.filePath })
           .then(() => {
-            enqueueSnackbar("wqed", { variant: "success" });
             reloadTreeData();
           })
           .catch((err) => {
@@ -119,12 +132,17 @@ function Folder(props: DataCompProps) {
             <Menubar>
               <Filename>{filename}</Filename>
               {canEdit && (
-                <UploadFileButton
-                  studyId={studyId}
-                  path={(file) => `${filePath}/${file.name}`}
-                  onUploadSuccessful={reloadTreeData}
-                  validate={handleValidateUpload}
-                />
+                <>
+                  <Button variant="contained" size="small" onClick={handleCreateFolderClick}>
+                    New Folder
+                  </Button>
+                  <UploadFileButton
+                    studyId={studyId}
+                    path={(file) => `${filePath}/${file.name}`}
+                    onUploadSuccessful={reloadTreeData}
+                    validate={handleValidateUpload}
+                  />
+                </>
               )}
             </Menubar>
           </ListSubheader>
@@ -159,6 +177,7 @@ function Folder(props: DataCompProps) {
                           setMenuData({
                             anchorEl: event.currentTarget,
                             filePath: path,
+                            isFolder: type === "folder",
                           });
                         }}
                       >
@@ -205,6 +224,13 @@ function Folder(props: DataCompProps) {
           {t("global.delete")}
         </MenuItem>
       </Menu>
+      <CreateFoldersDialog
+        open={displayNewFolderModal}
+        onCancel={() => setDisplayNewFolderModal(false)}
+        studyId={studyId}
+        parentPath={filePath}
+        reloadTreeData={reloadTreeData}
+      />
       {/* Confirm file replacement */}
       <ConfirmationDialog
         title={t("study.debug.folder.upload.replaceFileConfirm.title")}
