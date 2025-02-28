@@ -47,6 +47,7 @@ from antarest.study.storage.variantstudy.model.command.remove_user_resource impo
 from antarest.study.storage.variantstudy.model.command.remove_xpansion_configuration import RemoveXpansionConfiguration
 from antarest.study.storage.variantstudy.model.command.remove_xpansion_resource import RemoveXpansionResource
 from antarest.study.storage.variantstudy.model.command.replace_matrix import ReplaceMatrix
+from antarest.study.storage.variantstudy.model.command.update_area_properties import UpdateAreasProperties
 from antarest.study.storage.variantstudy.model.command.update_area_ui import UpdateAreaUI
 from antarest.study.storage.variantstudy.model.command.update_binding_constraint import UpdateBindingConstraint
 from antarest.study.storage.variantstudy.model.command.update_comments import UpdateComments
@@ -63,6 +64,7 @@ from antarest.study.storage.variantstudy.model.model import CommandDTO
 
 COMMAND_MAPPING: Dict[str, Type[ICommand]] = {
     CommandName.CREATE_AREA.value: CreateArea,
+    CommandName.UPDATE_AREAS_PROPERTIES.value: UpdateAreasProperties,
     CommandName.UPDATE_AREA_UI.value: UpdateAreaUI,
     CommandName.REMOVE_AREA.value: RemoveArea,
     CommandName.CREATE_DISTRICT.value: CreateDistrict,
