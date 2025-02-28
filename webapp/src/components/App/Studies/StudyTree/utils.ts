@@ -275,3 +275,47 @@ export async function fetchAndInsertWorkspaces(studyTree: StudyTreeNode): Promis
   const workspaces = await api.getWorkspaces();
   return insertWorkspacesIfNotExist(studyTree, workspaces);
 }
+
+/**
+ * This function is used when we want to get updates of rTree withouth loosing data from lTree.
+ *
+ *
+ * @param left
+ * @param right
+ * @returns a new tree with the data from rTree merged into lTree.
+ */
+export function mergeDeepRightStudyTree(left: StudyTreeNode, right: StudyTreeNode): StudyTreeNode {
+  const onlyLeft = left.children.filter(
+    (eLeft) => !right.children.some((eRight) => eLeft.name === eRight.name),
+  );
+  const onlyRight = right.children.filter(
+    (eRight) => !left.children.some((eLeft) => eLeft.name === eRight.name),
+  );
+  const both = innerJoin(left.children, right.children);
+  const bothAfterMerge = both.map((e) => mergeDeepRightStudyTree(e[0], e[1]));
+  const childrenAfterMerge = [...onlyLeft, ...bothAfterMerge, ...onlyRight];
+  return {
+    ...right,
+    children: childrenAfterMerge,
+  };
+}
+
+/**
+ * This function joins based on the name property.
+ *
+ * @param left
+ * @param right
+ * @returns list of tuples where the first element is from the left list and the second element is from the right list.
+ */
+export function innerJoin(
+  left: StudyTreeNode[],
+  right: StudyTreeNode[],
+): Array<[StudyTreeNode, StudyTreeNode]> {
+  return left.reduce<Array<[StudyTreeNode, StudyTreeNode]>>((acc, leftNode) => {
+    const matchedRightNode = right.find((rightNode) => rightNode.name === leftNode.name);
+    if (matchedRightNode) {
+      acc.push([{ ...leftNode }, { ...matchedRightNode }]);
+    }
+    return acc;
+  }, []);
+}
