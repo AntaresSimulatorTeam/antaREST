@@ -63,6 +63,7 @@ import { scanFolder } from "../../../../services/api/study";
 import useEnqueueErrorSnackbar from "../../../../hooks/useEnqueueErrorSnackbar";
 import ConfirmationDialog from "../../../common/dialogs/ConfirmationDialog";
 import CheckBoxFE from "@/components/common/fieldEditors/CheckBoxFE";
+import { DEFAULT_WORKSPACE_PREFIX, ROOT_FOLDER_NAME } from "@/components/common/utils/constants";
 
 const CARD_TARGET_WIDTH = 500;
 const CARD_HEIGHT = 250;
@@ -87,6 +88,9 @@ function StudiesList(props: StudiesListProps) {
   const [selectionMode, setSelectionMode] = useState(false);
   const [confirmFolderScan, setConfirmFolderScan] = useState(false);
   const [isRecursiveScan, setIsRecursiveScan] = useState(false);
+  const isInDefaultWorkspace = !!folder && folder.startsWith(DEFAULT_WORKSPACE_PREFIX);
+  const isRootFolder = folder === ROOT_FOLDER_NAME;
+  const scanDisabled: boolean = isInDefaultWorkspace || isRootFolder;
 
   useEffect(() => {
     setFolderList(folder.split("/"));
@@ -265,14 +269,14 @@ function StudiesList(props: StudiesListProps) {
             </Tooltip>
           )}
 
-          {folder !== "root" && (
+          {!scanDisabled && (
             <Tooltip title={t("studies.scanFolder") as string}>
-              <IconButton onClick={() => setConfirmFolderScan(true)}>
+              <IconButton onClick={() => setConfirmFolderScan(true)} disabled={scanDisabled}>
                 <RadarIcon />
               </IconButton>
             </Tooltip>
           )}
-          {folder !== "root" && confirmFolderScan && (
+          {!isRootFolder && confirmFolderScan && (
             <ConfirmationDialog
               titleIcon={RadarIcon}
               onCancel={() => {
