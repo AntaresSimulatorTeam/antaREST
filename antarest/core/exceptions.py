@@ -741,6 +741,11 @@ class XpansionConfigurationAlreadyExists(Exception):
         super().__init__(HTTPStatus.CONFLICT, f"Xpansion configuration already exists for study {study_id}")
 
 
+class XpansionFileAlreadyExistsError(HTTPException):
+    def __init__(self, message: str) -> None:
+        super().__init__(HTTPStatus.CONFLICT, message)
+
+
 class FileCurrentlyUsedInSettings(HTTPException):
     def __init__(self, resource_type: str, filename: str) -> None:
         msg = f"The {resource_type} file '{filename}' is still used in the xpansion settings and cannot be deleted"
